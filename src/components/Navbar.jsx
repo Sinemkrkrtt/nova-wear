@@ -140,9 +140,17 @@ export default function Navbar() {
   }, [searchQuery, allProducts]);
 
   // Arama placeholder'ı: kategori isimlerini kendi kendine yazıp silen animasyon.
+  //
+  // İpuçları menüdeki kategorilerin ta kendisi: admin panelinden yeni bir
+  // kategori eklendiğinde burası da kendiliğinden güncellenir. Arama, ürün
+  // adının yanı sıra kategori alanında da eşleşme aradığı için bunlar
+  // gerçekten sonuç veren terimler.
   useEffect(() => {
     if (!searchOpen) { setTypedHint(''); return; }
-    const HINTS = ['ABİYE', 'ELBİSE', 'NİŞANLIK', 'MEZUNİYET ELBİSESİ', 'KOKTEYL ELBİSESİ', 'MİNİ ELBİSE', 'GECE ELBİSESİ'];
+    // Türkçe büyük harf: 'Tişört' → 'TİŞÖRT' (varsayılan toUpperCase 'TISÖRT' yapardı).
+    const HINTS = (categories.length ? categories : DEFAULT_CATEGORIES)
+      .map((c) => String(c).toLocaleUpperCase('tr-TR'));
+    if (!HINTS.length) return;
     let wordIdx = 0;
     let charIdx = 0;
     let deleting = false;
@@ -163,7 +171,7 @@ export default function Navbar() {
     };
     timer = setTimeout(tick, 450);
     return () => clearTimeout(timer);
-  }, [searchOpen]);
+  }, [searchOpen, categories]);
 
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
