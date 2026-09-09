@@ -254,7 +254,11 @@ async function computeAuthoritativeOrder(rawItems, couponCode, buyerEmail) {
 
     lineItems.push({
       id: id,
-      name: (typeof it.name === "string" && it.name.slice(0, 200)) || product.name || "Ürün",
+      // Ad VERİTABANINDAN alınır. Eskiden istemcinin gönderdiği ad
+      // öncelikliydi; müşteri ucuz bir ürünün gerçek fiyatını ödeyip
+      // siparişte, e-postada ve sevkiyat listesinde başka bir ürün adı
+      // görünmesini sağlayabiliyordu.
+      name: product.name || "Ürün",
       category: Array.isArray(product.category) ? (product.category[0] || "Giyim") : (product.category || "Giyim"),
       unitPrice: unitPrice,
       quantity: qty,
@@ -545,7 +549,10 @@ exports.createPayment = functions.https.onRequest((req, res) => {
         customerName: fullName,
         email: email,
         phone: gsm,
-        identityNumber: data.identityNumber || "", // SİPARİŞE TC KİMLİK EKLENDİ
+        // Temizlenmiş değişken kullanılır. Ham gövde alanı yazılırsa istemci
+        // nesne/dizi gönderip admin sipariş ekranını kırabilir; ayrıca TCKN
+        // hassas veri olduğu için uzunluk sınırı zorunlu.
+        identityNumber: identityNumber,
         address: address,
         status: "Ödeme Bekliyor",
         items: order.lineItems.map((li) => ({
@@ -773,6 +780,19 @@ exports.paymentCallback = functions.https.onRequest((req, res) => {
 // Bearer ID token varsa doğrular ve UID döndürür; yoksa/geçersizse null.
 // (Misafir kapıda-ödeme siparişine izin verir; ama giriş yapan kullanıcının
 // siparişi GERÇEK UID'sine bağlanır — istemcinin gönderdiği userId'ye güvenmeyiz.)
+// Doğrulanmış kimlik token'ından e-posta adresini çıkarır; token yoksa boş.
+async function verifiedEmailFrom(req) {
+  const authHeader = req.headers.authorization || req.headers.Authorization || "";
+  const idToken = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
+  if (!idToken) return "";
+  try {
+    const decoded = await admin.auth().verifyIdToken(idToken);
+    return (decoded.email || "").toLowerCase();
+  } catch (e) {
+    return "";
+  }
+}
+
 async function verifyOptionalUser(req) {
   const authHeader = req.headers.authorization || req.headers.Authorization || "";
   const idToken = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
@@ -1011,7 +1031,12 @@ exports.validateCoupon = functions.https.onRequest((req, res) => {
       const data = (req.body && req.body.data) || {};
       const code = clampString(data.code, 40, "").toUpperCase();
       const subtotal = Math.max(0, Number(data.subtotal) || 0);
-      const email = clampString(data.email, 254, "").toLowerCase();
+      // E-posta İSTEMCİDEN DEĞİL, doğrulanmış token'dan alınır. Aksi halde bir
+      // kampanya kodunu bilen herkes istediği adresi sorgulayıp o kişinin
+      // mağazadan alışveriş yapıp yapmadığını öğrenebiliyordu.
+      // Misafirlerde boş kalır; "kişi başı tek kullanım" kuralı ödeme anında
+      // yine de uygulanır (bkz. computeAuthoritativeOrder).
+      const email = await verifiedEmailFrom(req);
       if (!code) {
         return res.status(200).send({data: {valid: false, message: "Kupon kodu boş."}});
       }
@@ -1034,12 +1059,9 @@ exports.validateCoupon = functions.https.onRequest((req, res) => {
         return res.status(200).send({data: {valid: false, message: "Bu kuponu daha önce kullandınız."}});
       }
 
-      return res.status(200).send({data: {
-        valid: true,
-        discount: result.discount,
-        discountType: result.discountType,
-        discountValue: result.discountValue,
-      }});
+      // Yalnızca hesaplanmış indirim tutarı döner. discountType/discountValue
+      // istemcide kullanılmıyordu ve kupon yapılandırmasını sızdırıyordu.
+      return res.status(200).send({data: {valid: true, discount: result.discount}});
     } catch (error) {
       console.error("validateCoupon hata:", error);
       return res.status(500).send({data: {valid: false, message: "Kupon kontrol edilemedi."}});

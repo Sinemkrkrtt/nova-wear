@@ -4,7 +4,7 @@ import {
     Divider, Stack, TextField, Tooltip, Paper, Chip, LinearProgress
 } from "@mui/material";
 import { doc, getDoc } from 'firebase/firestore';
-import { auth, db, appCheckHeaders, FUNCTIONS_BASE_URL } from '../../src/config/firebase';
+import { auth, db, appCheckHeaders, authHeaders, FUNCTIONS_BASE_URL } from '../../src/config/firebase';
 
 // İKONLARI TEK BİR SATIRDAN TOPLU ÇEKİYORUZ
 import {
@@ -147,10 +147,13 @@ function CartPage() {
 
         try {
             const acHeaders = await appCheckHeaders();
+            // E-posta gövdede GÖNDERİLMEZ: sunucu, "kişi başı tek kullanım"
+            // kontrolü için adresi doğrulanmış token'dan okur.
+            const idHeaders = await authHeaders();
             const response = await fetch(`${FUNCTIONS_BASE_URL}/validateCoupon`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", ...acHeaders },
-                body: JSON.stringify({ data: { code: codeUpper, subtotal: Number(subtotal.toFixed(2)), email: user?.email || '' } })
+                headers: { "Content-Type": "application/json", ...acHeaders, ...idHeaders },
+                body: JSON.stringify({ data: { code: codeUpper, subtotal: Number(subtotal.toFixed(2)) } })
             });
             const result = await response.json();
             const payload = result.data || {};
