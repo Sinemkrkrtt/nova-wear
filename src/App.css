@@ -423,6 +423,36 @@ body {
   color: var(--nw-on-accent);
 }
 
+/* --- ŞERİT VE BAŞLIK: DAR EKRAN ----------------------------------------
+   Telefonda bölüm başlığı sıkışıyordu: "Yeni gelenler" iki satıra bölünüyor,
+   alt açıklama kırılıyor, "Tümünü gör" ile oklar aynı dar şeride sıkışıyordu.
+   Dokunmatikte şerit zaten parmakla kaydırıldığı için oklar gizleniyor ve
+   açılan yer başlığa veriliyor. */
+@media (max-width: 900px) {
+  .nw-rail-arrow { display: none; }
+  /* Üç tam kart + dördüncüsünden bir dilim (devamı olduğu belli olsun). */
+  .nw-rail { gap: 14px; grid-auto-columns: calc((100% - 2 * 14px) / 3 - 10px); }
+}
+
+@media (max-width: 620px) {
+  /* "Tümünü gör" başlığın ilk satırının çizgisine oturur; başlık artık
+     kendi satırının tamamını kullanabildiği için tek satıra sığar. */
+  .nw-section-head { align-items: baseline; gap: 14px; }
+  .nw-section-head h2 { font-size: 1.45rem; line-height: 1.15; }
+  .nw-section-head p { font-size: 12.5px; margin-top: 5px; }
+
+  /* Tek kart yerine iki tam kart: ürünler yan yana karşılaştırılabiliyor ve
+     ekranın yarısını tek bir fotoğraf kaplamıyor. */
+  .nw-rail { gap: 12px; grid-auto-columns: calc((100% - 12px) / 2 - 10px); }
+
+  /* Kart daralınca isim için peşinen ayrılan ikinci satır, tek satırlık
+     isimlerde ismin altında kocaman bir boşluk bırakıyordu. Fiyatların aynı
+     hizada durmasını zaten kartın esnek yerleşimi sağlıyor (gövde flex:1,
+     alt satır margin-top:auto), bu yüzden sabit yükseklik kaldırıldı. */
+  .nw-card-name { font-size: 13px; margin-bottom: 8px; min-height: 0; }
+  .nw-card-price { font-size: 15px; }
+}
+
 /* --- FOOTER ------------------------------------------------------------ */
 .nw-footer {
   background: var(--nw-bg-elev);
