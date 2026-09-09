@@ -74,7 +74,7 @@ body {
   overflow: hidden;
   background:
     radial-gradient(900px 420px at 78% 8%, var(--nw-accent-soft), transparent 62%),
-    linear-gradient(168deg, #17171C 0%, var(--nw-bg) 58%);
+    var(--nw-bg);
   border-bottom: 1px solid var(--nw-line);
 }
 .nw-hero-inner {
@@ -365,13 +365,13 @@ body {
   border: 0;
   border-radius: var(--nw-r-pill);
   /* Görselin üzerinde her zaman okunur kalsın diye koyu yarı saydam zemin. */
-  background: rgba(19, 19, 22, 0.55);
+  background: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(8px);
   color: #fff;
   cursor: pointer;
   transition: all 0.18s var(--nw-ease);
 }
-.nw-card-fav:hover { background: rgba(19, 19, 22, 0.8); }
+.nw-card-fav:hover { background: rgba(0, 0, 0, 0.8); }
 .nw-card-fav.is-on { color: var(--nw-accent); }
 
 .nw-card-body { padding-top: 13px; display: flex; flex-direction: column; flex: 1; }

@@ -14,9 +14,9 @@
 
 :root {
   /* --- ZEMİN --- */
-  /* Saf siyah (#000) yerine ısıtılmış kömür grisi: ekranda daha yumuşak durur,
-     kontrast keskinliğini azaltır ama karanlık karakteri korur. */
-  --nw-bg:           #131316;
+  /* Sayfa zemini saf siyah. Üstteki yüzeyler (bg-elev, surface) gri kaldığı
+     için kartlar ve paneller zeminden belirgin şekilde ayrışıyor. */
+  --nw-bg:           #000000;
   --nw-bg-elev:      #1A1A20;   /* hafif yükseltilmiş yüzey (kart arkası) */
   --nw-surface:      #202027;   /* kart, giriş alanı, açılır menü */
   --nw-surface-2:    #2A2A33;   /* hover / seçili durum */

@@ -251,7 +251,7 @@ export default function Navbar() {
       <Box component="header" sx={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         px: { xs: 2, md: 5 }, py: { xs: 1, md: 1 },
-        borderBottom: `1px solid ${line}`, bgcolor: 'rgba(19,19,22,0.86)',
+        borderBottom: `1px solid ${line}`, bgcolor: 'rgba(0,0,0,0.86)',
         backdropFilter: 'blur(18px)',
         position: 'sticky', top: 0, zIndex: 1100
       }}>
@@ -494,7 +494,7 @@ export default function Navbar() {
         onClose={() => { setSearchOpen(false); setSearchQuery(''); }}
         transitionDuration={400}
         PaperProps={{
-          sx: { height: '100vh', bgcolor: 'rgba(19, 19, 22, 0.97)', backdropFilter: 'blur(20px)', display: 'flex', flexDirection: 'column' }
+          sx: { height: '100vh', bgcolor: 'rgba(0, 0, 0, 0.97)', backdropFilter: 'blur(20px)', display: 'flex', flexDirection: 'column' }
         }}
       >
         <Box sx={{ p: { xs: 3, md: 5 }, display: 'flex', justifyContent: 'flex-end', position: 'absolute', top: 0, right: 0, zIndex: 10 }}>

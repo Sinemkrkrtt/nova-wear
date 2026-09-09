@@ -12,7 +12,7 @@ import { createTheme } from '@mui/material/styles';
 // ---------------------------------------------------------------------------
 
 export const nw = {
-  bg: '#131316',
+  bg: '#000000',
   bgElev: '#1A1A20',
   surface: '#202027',
   surface2: '#2A2A33',
