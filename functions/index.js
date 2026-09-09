@@ -391,10 +391,27 @@ function buildBasketItems(order) {
   return basketItems;
 }
 
-function sanitizeString(value, maxLen, fallback) {
+// DİKKAT: Bu fonksiyon yalnızca kırpar ve uzunluğu sınırlar — HTML KAÇIŞI
+// YAPMAZ. Eski adı (sanitizeString) sağlamadığı bir güvenlik özelliğini
+// çağrıştırdığı için değiştirildi. HTML içine gömülecek her değer ayrıca
+// htmlEscape()'ten geçmelidir.
+function clampString(value, maxLen, fallback) {
   if (typeof value !== "string") return fallback;
   const trimmed = value.trim();
   return trimmed ? trimmed.slice(0, maxLen) : fallback;
+}
+
+// HTML gövdesine gömülecek metinleri güvenli hâle getirir.
+// E-posta şablonları müşteri girdisini (ad, adres, ürün adı) doğrudan
+// interpolasyonla yerleştiriyordu; bu, dükkân sahibinin gelen kutusuna
+// tıklanabilir oltalama bağlantısı yerleştirilmesine izin veriyordu.
+function htmlEscape(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 // Sipariş onay e-postasının HTML gövdesi (Firebase "Trigger Email" eklentisi
@@ -403,31 +420,31 @@ function sanitizeString(value, maxLen, fallback) {
 function buildOrderEmailHtml(order, orderNo, paymentNote) {
   const items = Array.isArray(order.items) ? order.items : [];
   const rows = items.map((it) => {
-    const variant = it.variant ? ` (${it.variant})` : "";
+    const variant = it.variant ? ` (${htmlEscape(it.variant)})` : "";
     const line = (Number(it.price) || 0) * (Number(it.quantity) || 1);
-    return `<tr><td style="padding:8px 0;border-bottom:1px solid #eee;">${(it.quantity || 1)}x ${it.name || "Ürün"}${variant}</td><td style="padding:8px 0;border-bottom:1px solid #eee;text-align:right;white-space:nowrap;">${line.toFixed(2)} ₺</td></tr>`;
+    return `<tr><td style="padding:8px 0;border-bottom:1px solid #eee;">${(it.quantity || 1)}x ${htmlEscape(it.name || "Ürün")}${variant}</td><td style="padding:8px 0;border-bottom:1px solid #eee;text-align:right;white-space:nowrap;">${line.toFixed(2)} ₺</td></tr>`;
   }).join("");
   const total = Number(order.totalAmount) || 0;
   return `
   <div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#2a2a30;border:1px solid #eee;">
     <div style="background:linear-gradient(135deg,#4b1f66,#8e3fc9);padding:28px;text-align:center;">
-      <div style="color:#fff;font-size:26px;font-weight:700;letter-spacing:2px;">${BRAND_NAME} <span style="font-weight:400;font-size:13px;letter-spacing:4px;">BUTİK</span></div>
+      <div style="color:#fff;font-size:26px;font-weight:700;letter-spacing:2px;">${htmlEscape(BRAND_NAME)}</div>
     </div>
     <div style="padding:28px;">
       <h2 style="color:#4b1f66;margin:0 0 8px;">Siparişiniz alındı! 🎉</h2>
-      <p style="color:#555;line-height:1.6;margin:0 0 20px;">Merhaba ${order.customerName || ""}, siparişiniz başarıyla oluşturuldu. ${BRAND_NAME}'i tercih ettiğiniz için teşekkür ederiz.</p>
+      <p style="color:#555;line-height:1.6;margin:0 0 20px;">Merhaba ${htmlEscape(order.customerName || "")}, siparişiniz başarıyla oluşturuldu. ${BRAND_NAME}'i tercih ettiğiniz için teşekkür ederiz.</p>
       <div style="background:#f7f4fb;border-radius:10px;padding:16px 20px;margin-bottom:20px;">
         <div style="font-size:13px;color:#888;text-transform:uppercase;letter-spacing:1px;">Sipariş Numarası</div>
-        <div style="font-size:20px;font-weight:700;color:#4b1f66;">${orderNo}</div>
+        <div style="font-size:20px;font-weight:700;color:#4b1f66;">${htmlEscape(orderNo)}</div>
         <div style="font-size:12px;color:#999;margin-top:6px;">Bu numarayı ve e-posta adresinizi kullanarak siparişinizi <b>Kargo Takip</b> sayfasından izleyebilirsiniz.</div>
       </div>
       ${paymentNote ? `<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:14px 18px;margin-bottom:20px;color:#9a3412;font-size:13px;line-height:1.6;">${paymentNote}</div>` : ""}
       <table style="width:100%;border-collapse:collapse;font-size:14px;">${rows}
         <tr><td style="padding:12px 0 0;font-weight:700;">Toplam</td><td style="padding:12px 0 0;text-align:right;font-weight:700;color:#4b1f66;">${total.toFixed(2)} ₺</td></tr>
       </table>
-      <p style="color:#888;font-size:12px;margin-top:24px;line-height:1.6;">Teslimat adresi: ${order.address || "-"}</p>
+      <p style="color:#888;font-size:12px;margin-top:24px;line-height:1.6;">Teslimat adresi: ${htmlEscape(order.address || "-")}</p>
     </div>
-    <div style="background:#2a1538;padding:18px;text-align:center;color:#c39eed;font-size:12px;">© ${BRAND_NAME}</div>
+    <div style="background:#2a1538;padding:18px;text-align:center;color:#c39eed;font-size:12px;">© ${htmlEscape(BRAND_NAME)}</div>
   </div>`;
 }
 
@@ -453,7 +470,7 @@ exports.createPayment = functions.https.onRequest((req, res) => {
     try {
       // Kupon "kişi başı tek kullanım" kontrolü için gerçek müşteri e-postası
       // (mağaza e-postası fallback'i kimlik olarak KULLANILMAZ).
-      const buyerEmailForCoupon = sanitizeString(data.email, 254, "").toLowerCase();
+      const buyerEmailForCoupon = clampString(data.email, 254, "").toLowerCase();
       const order = await computeAuthoritativeOrder(data.items, data.couponCode, buyerEmailForCoupon);
 
       // Stokta olmayan/yetersiz ürün varsa ödemeyi başlatma (aşırı satış önleme).
@@ -469,14 +486,14 @@ exports.createPayment = functions.https.onRequest((req, res) => {
         return res.status(400).send({data: {errorMessage: "Sepet geçersiz veya boş."}});
       }
 
-      const safeName = sanitizeString(data.userName, 100, "Müşteri");
-      const safeSurname = sanitizeString(data.userSurname, 100, "Soyisim");
+      const safeName = clampString(data.userName, 100, "Müşteri");
+      const safeSurname = clampString(data.userSurname, 100, "Soyisim");
       const fullName = `${safeName} ${safeSurname}`;
-      const email = sanitizeString(data.email, 254, NOTIFY_EMAIL);
-      const gsm = sanitizeString(data.gsmNumber, 20, "+905350000000");
-      const city = sanitizeString(data.city, 100, "Istanbul");
-      const address = sanitizeString(data.address, 500, "Adres belirtilmedi");
-      const identityNumber = sanitizeString(data.identityNumber, 11, "11111111111"); // TC KİMLİK EKLENDİ
+      const email = clampString(data.email, 254, NOTIFY_EMAIL);
+      const gsm = clampString(data.gsmNumber, 20, "+905350000000");
+      const city = clampString(data.city, 100, "Istanbul");
+      const address = clampString(data.address, 500, "Adres belirtilmedi");
+      const identityNumber = clampString(data.identityNumber, 11, "11111111111"); // TC KİMLİK EKLENDİ
       const verifiedUid = await verifyOptionalUser(req);
       const priceStr = order.total.toFixed(2);
       const conversationId = ORDER_PREFIX + Date.now();
@@ -783,7 +800,7 @@ exports.createCodOrder = functions.https.onRequest((req, res) => {
     const data = (req.body && req.body.data) || {};
 
     try {
-      const buyerEmail = sanitizeString(data.email, 254, "").toLowerCase();
+      const buyerEmail = clampString(data.email, 254, "").toLowerCase();
       const order = await computeAuthoritativeOrder(data.items, data.couponCode, buyerEmail);
 
       // Stokta olmayan/yetersiz ürün varsa siparişi oluşturma (aşırı satış önleme).
@@ -807,14 +824,14 @@ exports.createCodOrder = functions.https.onRequest((req, res) => {
       // userId'yi İSTEMCİDEN DEĞİL, doğrulanmış token'dan al.
       const verifiedUid = await verifyOptionalUser(req);
 
-      const safeName = sanitizeString(data.userName, 100, "Müşteri");
-      const safeSurname = sanitizeString(data.userSurname, 100, "");
+      const safeName = clampString(data.userName, 100, "Müşteri");
+      const safeSurname = clampString(data.userSurname, 100, "");
       const fullName = `${safeName} ${safeSurname}`.trim();
-      const email = sanitizeString(data.email, 254, "");
-      const gsm = sanitizeString(data.gsmNumber, 20, "");
-      const city = sanitizeString(data.city, 100, "");
-      const address = sanitizeString(data.address, 500, "Adres belirtilmedi");
-      const identityNumber = sanitizeString(data.identityNumber, 11, ""); // TC KİMLİK EKLENDİ
+      const email = clampString(data.email, 254, "");
+      const gsm = clampString(data.gsmNumber, 20, "");
+      const city = clampString(data.city, 100, "");
+      const address = clampString(data.address, 500, "Adres belirtilmedi");
+      const identityNumber = clampString(data.identityNumber, 11, ""); // TC KİMLİK EKLENDİ
       const orderNo = ORDER_PREFIX + Date.now();
 
       const db = admin.firestore();
@@ -992,9 +1009,9 @@ exports.validateCoupon = functions.https.onRequest((req, res) => {
     if (!(await passesAppCheck(req, res))) return;
     try {
       const data = (req.body && req.body.data) || {};
-      const code = sanitizeString(data.code, 40, "").toUpperCase();
+      const code = clampString(data.code, 40, "").toUpperCase();
       const subtotal = Math.max(0, Number(data.subtotal) || 0);
-      const email = sanitizeString(data.email, 254, "").toLowerCase();
+      const email = clampString(data.email, 254, "").toLowerCase();
       if (!code) {
         return res.status(200).send({data: {valid: false, message: "Kupon kodu boş."}});
       }
@@ -1043,8 +1060,8 @@ exports.trackOrder = functions.https.onRequest((req, res) => {
     if (!(await passesAppCheck(req, res))) return;
     try {
       const data = (req.body && req.body.data) || {};
-      const orderNumber = sanitizeString(data.orderNumber, 60, "");
-      const email = sanitizeString(data.email, 254, "").toLowerCase();
+      const orderNumber = clampString(data.orderNumber, 60, "");
+      const email = clampString(data.email, 254, "").toLowerCase();
 
       if (!orderNumber || !email) {
         return res.status(400).send({data: {found: false, message: "Sipariş numarası ve e-posta gereklidir."}});
@@ -1183,11 +1200,11 @@ exports.yeniSiparisMail = onDocumentWritten("orders/{orderId}", async (event) =>
             <table style="width: 100%; max-width: 500px; border-collapse: collapse; margin-top: 15px;">
               <tr style="border-bottom: 1px solid #eee;">
                 <td style="padding: 10px 0; font-weight: bold;">Sipariş No:</td>
-                <td style="padding: 10px 0;">${order.orderNumber || 'Bilinmiyor'}</td>
+                <td style="padding: 10px 0;">${htmlEscape(order.orderNumber || 'Bilinmiyor')}</td>
               </tr>
               <tr style="border-bottom: 1px solid #eee;">
                 <td style="padding: 10px 0; font-weight: bold;">Müşteri:</td>
-                <td style="padding: 10px 0;">${order.customerName || 'Belirtilmedi'}</td>
+                <td style="padding: 10px 0;">${htmlEscape(order.customerName || 'Belirtilmedi')}</td>
               </tr>
               <tr style="border-bottom: 1px solid #eee;">
                 <td style="padding: 10px 0; font-weight: bold;">Tutar:</td>
