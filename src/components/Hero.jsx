@@ -132,7 +132,7 @@ export default function Hero() {
               yüklenene kadar markanın logo görseli duruyor.
               Logo kare; kutu ise geniş. object-fit:cover ile üstteki/alttaki
               boş pay kırpılıyor, yazı tam ortada kalıyor. */}
-          <div className="nw-hero-media">
+          <div className={`nw-hero-media${heroImg ? '' : ' is-logo'}`}>
             {heroImg ? (
               <img src={imageUrl(heroImg, 1200)} alt="Nova Wear yeni sezon koleksiyonu" onError={imageFallback} />
             ) : (
