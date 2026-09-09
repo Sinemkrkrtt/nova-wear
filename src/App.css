@@ -207,9 +207,10 @@ body {
 }
 
 @keyframes nw-sheen {
-  /* Uzun bir bekleme, sonra tek ve akıcı bir geçiş. */
-  0%, 58%   { transform: translateX(-115%); }
-  84%, 100% { transform: translateX(115%); }
+  /* Geçiş döngünün BAŞINDA: sayfa açılır açılmaz (yarım saniye içinde) ışık
+     bir kez geçiyor, uzun bekleme ondan sonra geliyor. */
+  0%, 8%    { transform: translateX(-115%); }
+  34%, 100% { transform: translateX(115%); }
 }
 
 .nw-hero-media img {
