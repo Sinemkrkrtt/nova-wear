@@ -19,7 +19,7 @@ export const BRAND = {
   description: 'Günlük giyimde doğru kumaş, abartısız kesim.',
 
   // --- İletişim (DOLDURULACAK) ---
-  email: 'DOLDURULACAK@novawear.com',
+  email: 'novawear@gmail.com',
   phone: 'DOLDURULACAK',
 
   // --- Satıcı / şirket bilgileri (DOLDURULACAK) ---
