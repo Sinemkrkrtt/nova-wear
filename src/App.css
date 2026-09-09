@@ -453,6 +453,317 @@ body {
   .nw-card-price { font-size: 15px; }
 }
 
+/* --- SEPET SAYFASI -------------------------------------------------------
+   Sayfa, koleksiyon sayfalarıyla aynı kabuğu kullanır (.nw-wrap + ekmek
+   kırıntısı + .nw-collection-head). Burada yalnızca sepete özgü iki sütun,
+   ürün satırı ve sipariş özeti tanımlanıyor. */
+.nw-cart {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 358px;
+  gap: clamp(16px, 2.4vw, 30px);
+  align-items: start;
+  padding-bottom: clamp(48px, 6vw, 80px);
+}
+
+.nw-cart-list { display: flex; flex-direction: column; gap: 12px; }
+
+.nw-cart-row {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr);
+  gap: 16px;
+  padding: 14px;
+  border: 1px solid var(--nw-line);
+  border-radius: var(--nw-r-md);
+  background: var(--nw-bg-elev);
+}
+/* Stokta kalmamış satır: kenarlık uyarı rengine döner, satır kaybolmaz. */
+.nw-cart-row.is-gone { border-color: rgba(255, 95, 95, 0.34); }
+
+.nw-cart-thumb {
+  padding: 0;
+  border: 1px solid var(--nw-line);
+  border-radius: var(--nw-r-sm);
+  overflow: hidden;
+  background: var(--nw-surface);
+  aspect-ratio: 3 / 4;
+  cursor: pointer;
+}
+.nw-cart-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transition: transform 0.4s var(--nw-ease);
+}
+.nw-cart-thumb:hover img { transform: scale(1.05); }
+
+.nw-cart-info { display: flex; flex-direction: column; min-width: 0; }
+.nw-cart-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.nw-cart-titles { min-width: 0; }
+
+.nw-cart-name {
+  font-family: var(--nw-font-display);
+  font-size: 15.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  margin: 0;
+  color: var(--nw-text);
+  cursor: pointer;
+}
+.nw-cart-name:hover { color: var(--nw-accent); }
+
+.nw-cart-meta { margin: 7px 0 0; font-size: 12.5px; color: var(--nw-text-faint); }
+.nw-cart-meta b { color: var(--nw-text-dim); font-weight: 600; }
+.nw-cart-warn { margin: 8px 0 0; font-size: 12.5px; font-weight: 600; color: var(--nw-danger); }
+
+.nw-cart-remove {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--nw-r-sm);
+  background: transparent;
+  color: var(--nw-text-faint);
+  cursor: pointer;
+  transition: all 0.18s var(--nw-ease);
+}
+.nw-cart-remove:hover {
+  color: var(--nw-danger);
+  background: var(--nw-danger-soft);
+  border-color: rgba(255, 95, 95, 0.24);
+}
+
+/* Fiyat satırı satırın altına yaslanır: farklı yükseklikteki ürün adlarında
+   bile adet ve fiyat aynı hizada kalır. */
+.nw-cart-foot {
+  margin-top: auto;
+  padding-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.nw-qty {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--nw-line);
+  border-radius: var(--nw-r-pill);
+  background: var(--nw-surface);
+}
+.nw-qty button {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: none;
+  color: var(--nw-text-dim);
+  border-radius: var(--nw-r-pill);
+  cursor: pointer;
+  transition: all 0.18s var(--nw-ease);
+}
+.nw-qty button:hover:not(:disabled) { color: var(--nw-text); background: var(--nw-surface-2); }
+.nw-qty button:disabled { opacity: 0.3; cursor: default; }
+.nw-qty span {
+  min-width: 26px;
+  text-align: center;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nw-text);
+}
+
+.nw-cart-price {
+  font-family: var(--nw-font-display);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--nw-text);
+  white-space: nowrap;
+}
+
+/* --- SİPARİŞ ÖZETİ --- */
+.nw-cart-summary {
+  position: sticky;
+  /* Yapışkan navbar'ın altında kalsın. */
+  top: 92px;
+  padding: clamp(18px, 2vw, 24px);
+  border: 1px solid var(--nw-line);
+  border-radius: var(--nw-r-lg);
+  background: var(--nw-surface);
+}
+.nw-cart-summary h2 {
+  font-family: var(--nw-font-display);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 14px;
+}
+
+.nw-sum-lines { display: flex; flex-direction: column; }
+.nw-sum-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  font-size: 13.5px;
+  color: var(--nw-text-dim);
+}
+.nw-sum-line b { color: var(--nw-text); font-weight: 600; }
+.nw-sum-line.is-free b,
+.nw-sum-line.is-discount,
+.nw-sum-line.is-discount b { color: var(--nw-success); }
+
+/* Ücretsiz kargo çubuğu */
+.nw-ship {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px dashed var(--nw-line-strong);
+  border-radius: var(--nw-r-md);
+  background: var(--nw-bg-elev);
+}
+.nw-ship-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--nw-text-dim);
+  margin-bottom: 9px;
+}
+.nw-ship-top b { color: var(--nw-accent); font-weight: 700; }
+.nw-ship-bar {
+  height: 5px;
+  border-radius: var(--nw-r-pill);
+  background: var(--nw-line);
+  overflow: hidden;
+}
+.nw-ship-bar i {
+  display: block;
+  height: 100%;
+  background: var(--nw-accent);
+  border-radius: var(--nw-r-pill);
+  transition: width 0.4s var(--nw-ease);
+}
+
+/* Kupon alanı */
+.nw-coupon { margin-top: 18px; }
+.nw-label {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--nw-text-faint);
+  margin-bottom: 8px;
+}
+.nw-coupon-row { display: flex; gap: 8px; }
+.nw-coupon-row .nw-btn { flex-shrink: 0; padding: 11px 18px; border-radius: var(--nw-r-sm); }
+.nw-coupon-msg { margin: 9px 0 0; font-size: 12.5px; font-weight: 600; }
+.nw-coupon-msg.ok  { color: var(--nw-success); }
+.nw-coupon-msg.err { color: var(--nw-danger); }
+
+/* Site genelinde kullanılabilecek yalın giriş alanı. */
+.nw-field {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 12px;
+  font-family: var(--nw-font-body);
+  font-size: 13.5px;
+  color: var(--nw-text);
+  background: var(--nw-bg-elev);
+  border: 1px solid var(--nw-line);
+  border-radius: var(--nw-r-sm);
+  outline: none;
+  transition: border-color 0.18s var(--nw-ease);
+}
+.nw-field::placeholder { color: var(--nw-text-faint); }
+.nw-field:focus { border-color: var(--nw-accent); }
+
+.nw-sum-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--nw-line);
+}
+.nw-sum-total span { font-size: 14px; color: var(--nw-text-dim); }
+.nw-sum-total strong {
+  font-family: var(--nw-font-display);
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--nw-text);
+}
+
+.nw-alert {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border: 1px solid transparent;
+  border-radius: var(--nw-r-md);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.55;
+}
+.nw-alert-danger {
+  color: var(--nw-danger);
+  background: var(--nw-danger-soft);
+  border-color: rgba(255, 95, 95, 0.26);
+}
+
+.nw-cart-cta {
+  width: 100%;
+  justify-content: center;
+  margin-top: 18px;
+  padding: 15px 24px;
+  font-size: 14px;
+}
+.nw-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.nw-cart-trust {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+.nw-cart-trust-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 13px;
+  border-radius: var(--nw-r-pill);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--nw-success);
+  background: var(--nw-success-soft);
+}
+.nw-cart-pay { display: flex; gap: 8px; }
+
+@media (max-width: 980px) {
+  /* Özet tek sütuna düşer; yapışkanlık burada işe yaramaz, sayfanın sonuna
+     yerleşir ve ürünlerden sonra okunur. */
+  .nw-cart { grid-template-columns: 1fr; }
+  .nw-cart-summary { position: static; }
+}
+
+@media (max-width: 560px) {
+  .nw-cart-row { grid-template-columns: 88px minmax(0, 1fr); gap: 12px; padding: 12px; }
+  .nw-cart-name { font-size: 14.5px; }
+  /* Dar ekranda adet ve fiyat aynı satırda sıkışıyordu. */
+  .nw-cart-foot { padding-top: 12px; }
+  .nw-cart-price { font-size: 16px; }
+}
+
 /* --- FOOTER ------------------------------------------------------------ */
 .nw-footer {
   background: var(--nw-bg-elev);

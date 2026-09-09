@@ -1,28 +1,63 @@
 import React, { useState, useEffect } from 'react';
-import {
-    Box, Typography, CardMedia, IconButton, Button,
-    Divider, Stack, TextField, Tooltip, Paper, Chip, LinearProgress
-} from "@mui/material";
+import { Link, useNavigate } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
-import { auth, db, appCheckHeaders, authHeaders, FUNCTIONS_BASE_URL } from '../../src/config/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
-// İKONLARI TEK BİR SATIRDAN TOPLU ÇEKİYORUZ
-import {
-    Delete,
-    Add as AddIcon,
-    Remove as RemoveIcon,
-    ArrowForwardIos as ArrowForwardIosIcon,
-    VerifiedUserOutlined as VerifiedUserOutlinedIcon,
-    ShoppingBagOutlined as ShoppingBagOutlinedIcon
-} from '@mui/icons-material';
-
-import { useNavigate } from 'react-router-dom';
+import { auth, db, appCheckHeaders, authHeaders, FUNCTIONS_BASE_URL } from '../config/firebase';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import CheckoutModal from '../components/CheckoutModal';
+import { imageUrl, imageFallback } from '../utils/storage';
 
-// Firebase Auth İmportları
-import { onAuthStateChanged } from 'firebase/auth';
+// ---------------------------------------------------------------------------
+// SEPET SAYFASI
+//
+// Görünüm, sitenin geri kalanıyla (koleksiyon/favoriler sayfaları) aynı
+// yapıyı kullanır: .nw-wrap kapsayıcısı, ekmek kırıntısı, .nw-collection-head
+// başlığı ve boşken .nw-empty. Daha önce bu sayfa MUI bileşenleriyle ayrı bir
+// dilde yazılmıştı (tam genişlik, italik başlıklar, degrade butonlar) ve
+// siteden kopuk duruyordu.
+//
+// Sayfanın MANTIĞI değişmedi: sepet localStorage'da tutulur, stok kontrolü ve
+// kupon doğrulaması aynı şekilde çalışır, ödeme yine CheckoutModal üzerinden
+// ilerler ve nihai fiyat her hâlükârda sunucuda yeniden hesaplanır.
+// ---------------------------------------------------------------------------
+
+// Fiyatlar site genelindeki biçimde: 1.235 ₺ (ürün kartlarıyla aynı).
+const tl = (n) => `${Number(n || 0).toLocaleString('tr-TR', { maximumFractionDigits: 2 })} ₺`;
+
+const IconTrash = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14" />
+    </svg>
+);
+
+const IconMinus = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M5 12h14" /></svg>
+);
+
+const IconPlus = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+);
+
+const IconShield = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M12 3l7 3v6c0 4.2-2.9 7.6-7 9-4.1-1.4-7-4.8-7-9V6z" /><path d="M9 12l2 2 4-4" />
+    </svg>
+);
+
+// Boş sepet işareti — koleksiyon sayfalarındaki halka işaretin içinde durur.
+const IconBag = (
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+        <path d="M3 6h18" /><path d="M16 10a4 4 0 0 1-8 0" />
+    </svg>
+);
 
 function CartPage() {
     const [cartItems, setCartItems] = useState([]);
@@ -30,7 +65,7 @@ function CartPage() {
     const [appliedCouponCode, setAppliedCouponCode] = useState('');
     const [discount, setDiscount] = useState(0);
     const [couponMessage, setCouponMessage] = useState({ type: '', text: '' });
-    
+
     // Kullanıcı Durumu
     const [user, setUser] = useState(null);
 
@@ -41,15 +76,6 @@ function CartPage() {
     const [unavailableIds, setUnavailableIds] = useState([]);
 
     const navigate = useNavigate();
-
-    // SENİN ORİJİNAL TASARIMIN VE FONTLARIN
-    const brandFont = 'var(--nw-font-display)';
-    const brandColor = "var(--nw-accent)";   
-    const brandDark = "var(--nw-accent-hover)";    
-    const brandHover = "var(--nw-accent-hover)";   
-    const bgLight = "var(--nw-bg-elev)";      
-    const textMain = "var(--nw-text)";
-    const textMuted = "var(--nw-text-dim)";
 
     const FREE_SHIPPING_THRESHOLD = 1500;
     const SHIPPING_COST = 135.00;
@@ -190,332 +216,247 @@ function CartPage() {
     const progressPercentage = Math.min((subtotal / FREE_SHIPPING_THRESHOLD) * 100, 100);
     const total = Math.max(0, subtotal > 0 ? (subtotal + shipping - discount) : 0);
 
-    // --- BOŞ SEPET EKRANI ---
+    const itemCount = cartItems.reduce((acc, item) => acc + (item.quantity || 1), 0);
+
+    // Sayfanın üst kısmı (ekmek kırıntısı + başlık) dolu ve boş sepette aynı:
+    // sepet boşalınca kullanıcı bambaşka bir sayfaya düşmüş gibi hissetmesin.
+    const head = (
+        <>
+            <nav className="nw-crumbs" aria-label="Konum">
+                <Link to="/">Ana sayfa</Link>
+                <span aria-hidden="true">/</span>
+                <span>Sepetim</span>
+            </nav>
+
+            <header className="nw-collection-head">
+                <h1>Sepetim</h1>
+                <p>Ödemeye geçmeden önce seçtiklerini gözden geçir.</p>
+                {cartItems.length > 0 && (
+                    <span className="nw-collection-count">{itemCount} parça</span>
+                )}
+            </header>
+        </>
+    );
+
+    // --- BOŞ SEPET ---
     if (cartItems.length === 0) {
         return (
-            <div className="nw-page" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%', maxWidth: 'none', backgroundColor: bgLight }}>
-                <style>{`
-                    html, body, #root, .App, .nw-page { max-width: none !important; width: 100% !important; margin: 0 !important; }
-                    .nw-page { overflow-x: hidden; }
-                `}</style>
-
+            <div className="nw-page">
                 <Navbar />
 
-                <Box sx={{
-                    flexGrow: 1, position: "relative", display: "flex", alignItems: "center",
-                    justifyContent: "center", py: { xs: 10, md: 15 }, overflow: "hidden"
-                }}>
-                    <Box sx={{
-                        position: "absolute", width: "100%", height: "100%",
-                        background: `radial-gradient(circle at center, ${brandHover}15 0%, transparent 50%)`,
-                        zIndex: 0
-                    }} />
+                <div className="nw-wrap">
+                    {head}
 
-                    <Stack alignItems="center" spacing={3} sx={{ textAlign: "center", width: "100%", maxWidth: "460px", mx: "auto", px: 3, position: "relative", zIndex: 1 }}>
-
-                        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', mb: 1 }}>
-                            <Box sx={{
-                                width: 120, height: 120,
-                                borderRadius: "50%",
-                                background: `linear-gradient(135deg, ${brandColor}, ${brandHover})`,
-                                boxShadow: `0 16px 40px -10px ${brandColor}99`,
-                                display: "flex", alignItems: "center", justifyContent: "center"
-                            }}>
-                                <ShoppingBagOutlinedIcon sx={{ fontSize: 56, color: "var(--nw-on-accent)" }} />
-                            </Box>
-                        </Box>
-
-                        <Typography sx={{ fontSize: "0.75rem", letterSpacing: 3, fontWeight: 700, color: brandHover, textTransform: "uppercase" }}>
-                            Sepetiniz
-                        </Typography>
-
-                        <Typography variant="h3" sx={{ fontFamily: brandFont, color: textMain, fontWeight: 500, lineHeight: 1.15, fontSize: { xs: "2rem", sm: "2.4rem" } }}>
-                            Şu an <span style={{ color: brandColor, fontStyle: "italic" }}>boş</span> görünüyor
-                        </Typography>
-
-                        <Typography variant="body1" sx={{ color: textMuted, lineHeight: 1.7, fontSize: "1rem", maxWidth: "92%" }}>
-                            Henüz bir seçim yapmadınız. Yeni sezon koleksiyonumuza göz atın, size özel parçaları keşfedin.
-                        </Typography>
-
-                        <Button
-                            variant="contained"
-                            onClick={() => navigate('/')}
-                            endIcon={<ArrowForwardIosIcon sx={{ fontSize: "0.85rem !important" }} />}
-                            sx={{
-                                background: `linear-gradient(135deg, ${brandColor}, ${brandHover})`,
-                                color: "var(--nw-on-accent)", textTransform: "none", borderRadius: "8px",
-                                padding: "14px 40px", fontSize: "1rem", letterSpacing: 1, fontWeight: 600,
-                                boxShadow: `0 10px 30px -8px ${brandColor}99`,
-                                "&:hover": { boxShadow: `0 14px 36px -8px ${brandColor}cc`, transform: "translateY(-2px)" },
-                                transition: "all 0.3s ease", mt: 2
-                            }}
-                        >
-                            Alışverişe Başla
-                        </Button>
-                    </Stack>
-                </Box>
+                    <div className="nw-empty">
+                        <span className="nw-empty-mark">{IconBag}</span>
+                        <h2>Sepetin şu an boş</h2>
+                        <p>
+                            Henüz bir seçim yapmadın. Yeni gelenlere göz at ya da favorilerine
+                            eklediğin parçaları sepete taşı.
+                        </p>
+                        <div className="nw-empty-actions">
+                            <button className="nw-btn nw-btn-primary" onClick={() => navigate('/yeni-gelenler')}>
+                                Yeni gelenler
+                            </button>
+                            <button className="nw-btn nw-btn-ghost" onClick={() => navigate('/favoriler')}>
+                                Favorilerim
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
                 <Footer />
             </div>
         );
     }
 
-    // --- DOLU SEPET EKRANI ---
+    // --- DOLU SEPET ---
     return (
-        <div className="nw-page" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%', maxWidth: 'none', backgroundColor: bgLight }}>
-            <style>{`html, body, #root, .App, .nw-page { max-width: none !important; width: 100% !important; margin: 0 !important; } .nw-page { overflow-x: hidden; }`}</style>
+        <div className="nw-page">
             <Navbar />
 
-            <Box sx={{ flexGrow: 1, py: { xs: 4, md: 6 } }}>
-                <Box
-                    style={{ width: "100%", maxWidth: "none", marginLeft: 0, marginRight: 0 }}
-                    sx={{ px: { xs: 2, sm: 4, md: 6, lg: 8 } }}
-                >
+            <div className="nw-wrap">
+                {head}
 
-                    <Divider sx={{ mb: 5, borderColor: "var(--nw-line)" }}>
-                        <Chip
-                            label={`${cartItems.length} ÜRÜN`}
-                            sx={{
-                                bgcolor: "var(--nw-surface)", border: "1px solid var(--nw-line)", fontWeight: 700,
-                                color: brandColor, px: 2, letterSpacing: 1.2, fontSize: "0.78rem"
-                            }}
-                        />
-                    </Divider>
+                <div className="nw-cart">
+                    {/* --- SOL: ÜRÜNLER --- */}
+                    <div className="nw-cart-list">
+                        {cartItems.map((item) => {
+                            const displayColor = item.color || item.selectedColor || item.renk || "";
+                            const displaySize = item.selectedSize || item.size || item.variant || "Standart";
+                            const gone = unavailableIds.includes(item.id);
+                            const openProduct = () => navigate(`/product/${item.id}`, { state: item });
 
-                    <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, alignItems: "flex-start", gap: { xs: 3, md: 0 } }}>
+                            return (
+                                <article key={item.id} className={`nw-cart-row${gone ? ' is-gone' : ''}`}>
+                                    <button className="nw-cart-thumb" onClick={openProduct} aria-label={`${item.name} ürününe git`}>
+                                        <img
+                                            src={imageUrl(item.imageUrl || item.images?.[0], 300)}
+                                            alt={item.name}
+                                            loading="lazy"
+                                            onError={imageFallback}
+                                        />
+                                    </button>
 
-                        {/* --- SOL KOLON (ÜRÜNLER) --- */}
-                        <Box sx={{ flex: 1, minWidth: 0, width: "100%", pr: { xs: 0, md: 4 } }}>
-                            <Stack spacing={3} pb={4}>
-                                {cartItems.map((item) => {
-                                    const displayColor = item.color || item.selectedColor || item.renk || "";
-                                    const displaySize = item.selectedSize || item.size || item.variant || "Standart";
+                                    <div className="nw-cart-info">
+                                        <div className="nw-cart-top">
+                                            <div className="nw-cart-titles">
+                                                <h2 className="nw-cart-name" onClick={openProduct}>
+                                                    {item.name}{displayColor ? ` - ${displayColor}` : ""}
+                                                </h2>
+                                                <p className="nw-cart-meta">
+                                                    Beden <b>{displaySize}</b>
+                                                    {displayColor && <> · Renk <b>{displayColor}</b></>}
+                                                </p>
+                                                {gone && (
+                                                    <p className="nw-cart-warn">
+                                                        Bu beden stokta kalmadı — ödemeye geçmek için kaldır.
+                                                    </p>
+                                                )}
+                                            </div>
 
-                                    return (
-                                        <Paper
-                                            key={item.id}
-                                            elevation={0}
-                                            sx={{
-                                                display: 'flex', p: { xs: 2, sm: 3 }, width: "100%", borderRadius: "18px", alignItems: "center", bgcolor: "var(--nw-surface)",
-                                                transition: "transform 0.2s, box-shadow 0.2s", border: "1px solid var(--nw-line)",
-                                                "&:hover": { boxShadow: "0 10px 30px rgba(0,0,0,0.05)", borderColor: "var(--nw-line)", transform: "translateY(-2px)" }
-                                            }}
-                                        >
-                                            <Box
-                                                onClick={() => navigate(`/product/${item.id}`, { state: item })}
-                                                sx={{ width: { xs: 90, sm: 130 }, height: { xs: 120, sm: 150 }, flexShrink: 0, cursor: "pointer", overflow: "hidden", borderRadius: "14px", bgcolor: "var(--nw-bg-elev)" }}
+                                            <button
+                                                className="nw-cart-remove"
+                                                onClick={() => handleRemoveItem(item.id)}
+                                                aria-label="Ürünü sepetten kaldır"
+                                                title="Sepetten kaldır"
                                             >
-                                                <CardMedia component="img" image={item.imageUrl} alt={item.name} sx={{ width: "100%", height: "100%", objectFit: "cover", transition: "0.4s", "&:hover": { transform: "scale(1.08)" } }} />
-                                            </Box>
+                                                <IconTrash />
+                                            </button>
+                                        </div>
 
-                                            <Box sx={{ flexGrow: 1, minWidth: 0, ml: { xs: 1.5, sm: 4 }, display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: { xs: 120, sm: 150 } }}>
-                                                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                                                    <Box sx={{ pr: 2 }}>
-                                                        <Typography
-                                                            variant="h6"
-                                                            sx={{ fontFamily: brandFont, fontStyle: "italic", fontSize: { xs: "1.25rem", sm: "1.5rem" }, fontWeight: 600, color: textMain, cursor: "pointer", lineHeight: 1.2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
-                                                            onClick={() => navigate(`/product/${item.id}`, { state: item })}
-                                                        >
-                                                            {item.name} {displayColor ? `- ${displayColor}` : ""}
-                                                        </Typography>
-                                                        <Typography variant="body2" sx={{ color: textMuted, mt: 0.5, fontSize: "0.9rem" }}>
-                                                            Beden: <span style={{ color: textMain, fontWeight: 500 }}>{displaySize}</span>
-                                                        </Typography>
-                                                        {unavailableIds.includes(item.id) && (
-                                                            <Typography variant="body2" sx={{ color: "var(--nw-danger)", mt: 0.5, fontSize: "0.82rem", fontWeight: 600 }}>
-                                                                ⚠ Bu ürün/beden stokta kalmadı. Lütfen kaldırın.
-                                                            </Typography>
-                                                        )}
-                                                    </Box>
-                                                    <Tooltip title="Ürünü Kaldır">
-                                                        <IconButton onClick={() => handleRemoveItem(item.id)} sx={{ color: "var(--nw-text-faint)", "&:hover": { color: "var(--nw-danger)", bgcolor: "var(--nw-danger-soft)" } }}>
-                                                            <Delete fontSize="small" />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                </Box>
+                                        <div className="nw-cart-foot">
+                                            <div className="nw-qty">
+                                                <button
+                                                    onClick={() => handleQuantityChange(item.id, -1)}
+                                                    disabled={(item.quantity || 1) <= 1}
+                                                    aria-label="Adedi azalt"
+                                                >
+                                                    <IconMinus />
+                                                </button>
+                                                <span aria-live="polite">{item.quantity || 1}</span>
+                                                <button onClick={() => handleQuantityChange(item.id, 1)} aria-label="Adedi artır">
+                                                    <IconPlus />
+                                                </button>
+                                            </div>
 
-                                                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1, mt: 2 }}>
-                                                    <Box sx={{ display: "flex", alignItems: "center", bgcolor: "var(--nw-bg-elev)", borderRadius: "50px", px: 0.5, py: 0.25, border: "1px solid var(--nw-line)" }}>
-                                                        <IconButton onClick={() => handleQuantityChange(item.id, -1)} disabled={item.quantity <= 1} sx={{ color: textMuted, width: 36, height: 36 }}>
-                                                            <RemoveIcon fontSize="small" sx={{ fontSize: 16 }} />
-                                                        </IconButton>
-                                                        <Typography sx={{ px: { xs: 1, sm: 2 }, fontSize: "1rem", fontWeight: 700, minWidth: "20px", textAlign: "center", color: textMain }}>
-                                                            {item.quantity || 1}
-                                                        </Typography>
-                                                        <IconButton onClick={() => handleQuantityChange(item.id, 1)} sx={{ color: textMuted, width: 36, height: 36 }}>
-                                                            <AddIcon fontSize="small" sx={{ fontSize: 16 }} />
-                                                        </IconButton>
-                                                    </Box>
-                                                    <Typography variant="h5" sx={{ fontWeight: 700, color: brandColor, fontFamily: brandFont, fontStyle: "italic", fontSize: { xs: "1.25rem", sm: "1.7rem" }, whiteSpace: "nowrap" }}>
-                                                        {(Number(item.price) * (item.quantity || 1)).toFixed(2)} ₺
-                                                    </Typography>
-                                                </Box>
-                                            </Box>
-                                        </Paper>
-                                    );
-                                })}
-                            </Stack>
-                        </Box>
+                                            <span className="nw-cart-price">
+                                                {tl(Number(item.price) * (item.quantity || 1))}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </article>
+                            );
+                        })}
+                    </div>
 
-                        <Divider
-                            orientation="vertical"
-                            flexItem
-                            sx={{ display: { xs: "none", md: "block" }, borderColor: "var(--nw-line)", alignSelf: "stretch" }}
-                        />
+                    {/* --- SAĞ: SİPARİŞ ÖZETİ --- */}
+                    <aside className="nw-cart-summary" aria-label="Sipariş özeti">
+                        <h2>Sipariş özeti</h2>
 
-                        {/* --- SAĞ KOLON (SİPARİŞ ÖZETİ) --- */}
-                        <Box sx={{ width: { xs: "100%", md: 380 }, flexShrink: 0, pl: { xs: 0, md: 4 } }}>
-                            <Paper elevation={0} sx={{
-                                p: { xs: 3, sm: 4 }, bgcolor: "var(--nw-surface)", width: "100%", borderRadius: "18px", boxShadow: "0 10px 40px rgba(0,0,0,0.04)",
-                                border: "1px solid var(--nw-line)", height: "fit-content", position: { xs: "static", md: "sticky" }, top: 100
-                            }}>
-                                <Typography variant="h5" sx={{ fontFamily: brandFont, fontStyle: "italic", mb: 2, fontWeight: 700, color: textMain }}>
-                                    Sipariş Özeti
-                                </Typography>
-                                <Divider sx={{ mb: 3, borderColor: "var(--nw-line)" }} />
+                        <div className="nw-sum-lines">
+                            <div className="nw-sum-line">
+                                <span>Ara toplam</span>
+                                <b>{tl(subtotal)}</b>
+                            </div>
+                            <div className={`nw-sum-line${shipping === 0 ? ' is-free' : ''}`}>
+                                <span>Kargo</span>
+                                <b>{shipping === 0 ? 'Ücretsiz' : tl(shipping)}</b>
+                            </div>
+                            <div className="nw-sum-line">
+                                <span>KDV</span>
+                                <b>Fiyata dahil</b>
+                            </div>
+                            {discount > 0 && (
+                                <div className="nw-sum-line is-discount">
+                                    <span>İndirim{appliedCouponCode ? ` (${appliedCouponCode})` : ''}</span>
+                                    <b>- {tl(discount)}</b>
+                                </div>
+                            )}
+                        </div>
 
-                                <Stack spacing={2} sx={{ mb: 3 }}>
-                                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                                        <Typography sx={{ fontSize: "0.98rem", color: textMuted }}>Ara Toplam</Typography>
-                                        <Typography fontWeight={700} color={textMain} sx={{ fontSize: "0.98rem" }}>{subtotal.toFixed(2)} ₺</Typography>
-                                    </Box>
-
-                                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                                        <Typography sx={{ fontSize: "0.98rem", color: textMuted }}>Kargo Tahmini</Typography>
-                                        <Typography fontWeight={700} sx={{ fontSize: "0.98rem", color: shipping === 0 ? "var(--nw-success)" : textMain }}>
-                                            {shipping === 0 ? "Ücretsiz" : `${shipping.toFixed(2)} ₺`}
-                                        </Typography>
-                                    </Box>
-
-                                    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                                        <Typography sx={{ fontSize: "0.98rem", color: textMuted }}>KDV</Typography>
-                                        <Typography fontWeight={700} sx={{ fontSize: "0.98rem", color: textMain }}>Fiyata Dahil</Typography>
-                                    </Box>
-
-                                    {discount > 0 && (
-                                        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                                            <Typography sx={{ fontSize: "0.98rem", color: "var(--nw-success)" }}>İndirim</Typography>
-                                            <Typography fontWeight={700} sx={{ fontSize: "0.98rem", color: "var(--nw-success)" }}>- {discount.toFixed(2)} ₺</Typography>
-                                        </Box>
-                                    )}
-                                </Stack>
-
-                                {shipping > 0 && (
-                                    <Box sx={{ mb: 3, p: 2, bgcolor: bgLight, borderRadius: "10px" }}>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                                            <Typography variant="body2" sx={{ fontWeight: 600, color: textMain, fontSize: "0.82rem" }}>
-                                                Ücretsiz Kargo Fırsatı
-                                            </Typography>
-                                            <Typography variant="caption" sx={{ color: brandHover, fontWeight: 700 }}>
-                                                {amountLeftForFreeShipping.toFixed(2)} ₺ Kaldı
-                                            </Typography>
-                                        </Box>
-                                        <LinearProgress
-                                            variant="determinate"
-                                            value={progressPercentage}
-                                            sx={{
-                                                height: 6, borderRadius: 3, bgcolor: "var(--nw-line)",
-                                                "& .MuiLinearProgress-bar": { bgcolor: brandHover }
-                                            }}
-                                        />
-                                    </Box>
-                                )}
-
-                                <Box sx={{ mb: 3 }}>
-                                    <Typography variant="caption" sx={{ fontWeight: 700, mb: 1, display: "block", color: textMuted, letterSpacing: 1.2, fontSize: "0.72rem" }}>
-                                        PROMO KODU
-                                    </Typography>
-                                    <Box sx={{ display: "flex", gap: 1 }}>
-                                        <TextField
-                                            placeholder="Kodu girin" size="small" fullWidth
-                                            value={couponCode}
-                                            onChange={(e) => setCouponCode(e.target.value)}
-                                            sx={{ bgcolor: "var(--nw-bg-elev)", "& .MuiOutlinedInput-root": { borderRadius: "10px", '& fieldset': { borderColor: 'var(--nw-line)' }, '&.Mui-focused fieldset': { borderColor: brandColor } } }}
-                                        />
-                                        <Button
-                                            onClick={handleApplyCoupon}
-                                            variant="outlined"
-                                            sx={{
-                                                borderColor: brandColor, color: brandColor, borderRadius: "10px", textTransform: "none",
-                                                fontWeight: 700, px: 3, "&:hover": { bgcolor: brandColor, color: "var(--nw-on-accent)", borderColor: brandColor }
-                                            }}
-                                        >
-                                            Uygula
-                                        </Button>
-                                    </Box>
-                                    {couponMessage.text && (
-                                        <Typography sx={{ fontSize: '0.85rem', mt: 1, fontWeight: 500, color: couponMessage.type === 'success' ? 'var(--nw-success)' : 'var(--nw-danger)' }}>
-                                            {couponMessage.text}
-                                        </Typography>
-                                    )}
-                                </Box>
-
-                                <Divider sx={{ my: 3, borderColor: "var(--nw-line)" }} />
-
-                                <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3, alignItems: "center" }}>
-                                    <Typography variant="h6" fontWeight={700} color={textMain}>Toplam</Typography>
-                                    <Typography variant="h4" fontWeight={700} color={brandColor} sx={{ fontFamily: brandFont, fontStyle: "italic", fontSize: { xs: "1.4rem", sm: "1.7rem" } }}>
-                                        {total.toFixed(2)} ₺
-                                    </Typography>
-                                </Box>
-
-                                {/* STOK UYARISI */}
-                                {unavailableIds.length > 0 && (
-                                    <Box sx={{ mb: 2, p: 1.5, bgcolor: "var(--nw-danger-soft)", border: "1px solid var(--nw-danger-soft)", borderRadius: "10px" }}>
-                                        <Typography sx={{ color: "var(--nw-danger)", fontSize: "0.85rem", fontWeight: 600 }}>
-                                            Sepetinizde stokta olmayan ürün(ler) var. Ödemeye geçebilmek için lütfen bunları kaldırın.
-                                        </Typography>
-                                    </Box>
-                                )}
-
-                                {/* KONTROLLÜ ÖDEMEYE GEÇ BUTONU */}
-                                <Button
-                                    fullWidth
-                                    variant="contained"
-                                    onClick={handleCheckout}
-                                    disabled={unavailableIds.length > 0}
-                                    endIcon={<ArrowForwardIosIcon sx={{ fontSize: "1rem !important" }} />}
-                                    sx={{
-                                        bgcolor: brandDark, color: "var(--nw-on-accent)", py: 1.8, textTransform: "none", fontSize: "1.05rem", borderRadius: "10px",
-                                        fontWeight: 700, mb: 3, boxShadow: "0 8px 25px rgba(58, 24, 80, 0.25)",
-                                        "&:hover": { bgcolor: brandColor, transform: "translateY(-2px)", boxShadow: "0 12px 30px rgba(58, 24, 80, 0.35)" },
-                                        "&.Mui-disabled": { bgcolor: "var(--nw-text-faint)", color: "#fff", boxShadow: "none" },
-                                        transition: "all 0.3s ease"
-                                    }}
+                        {shipping > 0 && (
+                            <div className="nw-ship">
+                                <div className="nw-ship-top">
+                                    <span>Ücretsiz kargoya</span>
+                                    <b>{tl(amountLeftForFreeShipping)} kaldı</b>
+                                </div>
+                                <div
+                                    className="nw-ship-bar"
+                                    role="progressbar"
+                                    aria-valuenow={Math.round(progressPercentage)}
+                                    aria-valuemin={0}
+                                    aria-valuemax={100}
                                 >
-                                    Ödemeye Geç
-                                </Button>
+                                    <i style={{ width: `${progressPercentage}%` }} />
+                                </div>
+                            </div>
+                        )}
 
-                                {/* YENİ GÜVENLİK VE LOGO ALANI EKLENDİ */}
-                                <Stack spacing={2} justifyContent="center" alignItems="center">
-                                    <Box sx={{ display: "flex", alignItems: "center", gap: 1, color: "var(--nw-success)", bgcolor: "var(--nw-success-soft)", px: 2, py: 0.5, borderRadius: 10 }}>
-                                        <VerifiedUserOutlinedIcon fontSize="small" />
-                                        <Typography variant="caption" fontWeight={600} sx={{ fontSize: "0.75rem" }}>256-Bit SSL Güvenli Ödeme</Typography>
-                                    </Box>
+                        <div className="nw-coupon">
+                            <label className="nw-label" htmlFor="nw-coupon-input">İndirim kodu</label>
+                            <div className="nw-coupon-row">
+                                <input
+                                    id="nw-coupon-input"
+                                    className="nw-field"
+                                    placeholder="Kodu gir"
+                                    value={couponCode}
+                                    onChange={(e) => setCouponCode(e.target.value)}
+                                    onKeyDown={(e) => { if (e.key === 'Enter') handleApplyCoupon(); }}
+                                />
+                                <button className="nw-btn nw-btn-ghost" onClick={handleApplyCoupon}>
+                                    Uygula
+                                </button>
+                            </div>
+                            {couponMessage.text && (
+                                <p className={`nw-coupon-msg ${couponMessage.type === 'success' ? 'ok' : 'err'}`}>
+                                    {couponMessage.text}
+                                </p>
+                            )}
+                        </div>
 
-                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2.5, mt: 0.5 }}>
+                        <div className="nw-sum-total">
+                            <span>Toplam</span>
+                            <strong>{tl(total)}</strong>
+                        </div>
+
+                        {unavailableIds.length > 0 && (
+                            <div className="nw-alert nw-alert-danger" role="alert">
+                                Sepetinde stokta olmayan ürün var. Ödemeye geçebilmek için onu kaldır.
+                            </div>
+                        )}
+
+                        <button
+                            className="nw-btn nw-btn-primary nw-cart-cta"
+                            onClick={handleCheckout}
+                            disabled={unavailableIds.length > 0}
+                        >
+                            Ödemeye geç
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M5 12h14M13 6l6 6-6 6" />
+                            </svg>
+                        </button>
+
+                        <div className="nw-cart-trust">
+                            <span className="nw-cart-trust-line">
+                                <IconShield /> 256-bit SSL ile güvenli ödeme
+                            </span>
+                            <div className="nw-cart-pay">
+                                {['iyzico', 'visa', 'mastercard'].map((b) => (
+                                    <span className="nw-pay-chip" key={b}>
                                         <img
-                                            src={`${process.env.PUBLIC_URL}/payment/iyzico.svg`}
-                                            alt="iyzico"
-                                            style={{ height: '18px', opacity: 0.85 }}
+                                            src={`${process.env.PUBLIC_URL}/payment/${b}.svg`}
+                                            alt={b}
+                                            style={{ height: b === 'mastercard' ? 18 : 13, display: 'block' }}
                                         />
-                                        <img
-                                            src={`${process.env.PUBLIC_URL}/payment/visa.svg`}
-                                            alt="Visa"
-                                            style={{ height: '18px', opacity: 0.85 }}
-                                        />
-                                        <img
-                                            src={`${process.env.PUBLIC_URL}/payment/mastercard.svg`}
-                                            alt="Mastercard"
-                                            style={{ height: '24px', opacity: 0.9 }}
-                                        />
-                                    </Box>
-                                </Stack>
-                            </Paper>
-                        </Box>
-                    </Box>
-                </Box>
-            </Box>
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
 
             <CheckoutModal
                 open={checkoutOpen}

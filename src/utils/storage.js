@@ -97,3 +97,19 @@ export function imageUrl(url, width = 600) {
   if (/\/image\/upload\/[a-z]{1,3}_/.test(url)) return url;
   return url.replace('/image/upload/', `/image/upload/f_auto,q_auto,c_limit,w_${width}/`);
 }
+
+// Dönüşümlü adres çalışmazsa ham görsele düş.
+//
+// Cloudinary panelinde "Strict transformations" açıksa, izin verilmemiş her
+// dönüşüm 401 döner ve kart/küçük görsel yerine kırık resim simgesi çıkar.
+// Ham adres her zaman servis edilir; bu yüzden hata anında ona dönüyoruz:
+// kullanıcı biraz daha büyük bir dosya indirir ama görseli GÖRÜR.
+//
+// Kullanımı:  <img src={imageUrl(u, 300)} onError={imageFallback} />
+export function imageFallback(e) {
+  const img = e.currentTarget;
+  // Yalnızca bir kez dene; ham adres de açılmıyorsa sonsuz döngüye girmesin.
+  if (img.dataset.nwFallback) return;
+  img.dataset.nwFallback = '1';
+  img.src = img.src.replace(/\/image\/upload\/[^/]*_[^/]*\//, '/image/upload/');
+}
