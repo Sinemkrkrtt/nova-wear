@@ -145,13 +145,20 @@ body {
   align-self: center;
   min-height: 0;
   aspect-ratio: 16 / 11;
-  /* Logo görselinin kendi zemini de saf siyah — sayfanın zeminiyle aynı.
-     Bu yüzden kutu çizilmiyor: logo, kendi ışımasıyla zeminden ayrılıyor. */
-  background: transparent;
-  border: 0;
-  border-radius: 0;
+  /* Zemin siyah kalıyor ama alan boş bir delik gibi durmasın diye arkada
+     yumuşak bir mor ışıma ve saç teli inceliğinde bir çerçeve var. */
+  background:
+    radial-gradient(360px 240px at 50% 46%, var(--nw-accent-soft), transparent 72%),
+    var(--nw-bg);
+  border: 1px solid var(--nw-line);
+  border-radius: var(--nw-r-lg);
   box-shadow: none;
 }
+
+/* Logo görselinin zemini saf siyah olduğu için 'screen' karışımında o siyah
+   tamamen kaybolur: arkadaki ışıma harflerin arasından görünür, beyaz
+   harfler ve mor halka olduğu gibi kalır. */
+.nw-hero-media.is-logo img { mix-blend-mode: screen; }
 
 .nw-hero-media img {
   width: 100%;
