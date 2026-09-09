@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchBanners, fetchHeroImage } from '../utils/catalog';
-import Logo from './Logo';
+import heroLogo from '../assets/hero-logo.jpg';
 import { imageUrl, imageFallback } from '../utils/storage';
 
 export default function Hero() {
@@ -129,15 +129,14 @@ export default function Hero() {
           </div>
 
           {/* Admin panelinden (settings/hero) bir görsel yüklendiyse o gösterilir;
-              yüklenene kadar burada markanın logosu duruyor. */}
+              yüklenene kadar markanın logo görseli duruyor.
+              Logo kare; kutu ise geniş. object-fit:cover ile üstteki/alttaki
+              boş pay kırpılıyor, yazı tam ortada kalıyor. */}
           <div className="nw-hero-media">
             {heroImg ? (
               <img src={imageUrl(heroImg, 1200)} alt="Nova Wear yeni sezon koleksiyonu" onError={imageFallback} />
             ) : (
-              <div className="nw-hero-brand">
-                <Logo size="hero" layout="stack" />
-                <span className="nw-hero-brand-slogan">Tarzınla parla.</span>
-              </div>
+              <img src={heroLogo} alt="Nova Wear — Tarzınla parla" />
             )}
           </div>
         </div>
