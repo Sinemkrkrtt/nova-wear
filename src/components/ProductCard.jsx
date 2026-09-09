@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { imageUrl } from '../utils/storage';
+import { imageUrl, imageFallback } from '../utils/storage';
 
 // ---------------------------------------------------------------------------
 // ÜRÜN KARTI
@@ -80,7 +80,7 @@ export default function ProductCard({ product, badge, favorites, onFavoritesChan
           </svg>
         </button>
 
-        <img className="nw-card-img" src={imageUrl(image, 500)} alt={product.name} loading="lazy" />
+        <img className="nw-card-img" src={imageUrl(image, 500)} alt={product.name} loading="lazy" onError={imageFallback} />
       </div>
 
       <div className="nw-card-body">

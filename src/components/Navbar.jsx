@@ -15,7 +15,7 @@ import { auth, db } from '../../src/config/firebase';
 import { fetchCategories, DEFAULT_CATEGORIES } from '../utils/categories';
 import { nw } from '../theme/muiTheme';
 import BRAND from '../config/brand';
-import { imageUrl } from '../utils/storage';
+import { imageUrl, imageFallback } from '../utils/storage';
 import Logo from './Logo';
 
 // Türkçe / aksan duyarsız arama için normalize (Arama sayfası ile aynı davranış)
@@ -541,7 +541,7 @@ export default function Navbar() {
                           sx={{ cursor: 'pointer', minWidth: 0, display: 'flex', flexDirection: 'column', '&:hover .nw-search-img': { transform: 'scale(1.05)' } }}
                         >
                           <Box sx={{ position: 'relative', width: '100%', paddingTop: '133%', overflow: 'hidden', mb: { xs: 1.25, sm: 2 }, bgcolor: surfaceElev }}>
-                            <img src={imageUrl(product.imageUrl || product.images?.[0], 300)} alt={product.name} className="nw-search-img" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }} />
+                            <img src={imageUrl(product.imageUrl || product.images?.[0], 300)} alt={product.name} onError={imageFallback} className="nw-search-img" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }} />
                           </Box>
                           <Box sx={{ textAlign: 'left', px: 0.5, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                             <Typography sx={{ ...sharpStyle, color: textMain, fontSize: '0.8rem', mb: 0.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', minHeight: '2.4em', lineHeight: 1.2 }}>

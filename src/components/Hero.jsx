@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchBanners, fetchHeroImage } from '../utils/catalog';
 import Logo from './Logo';
-import { imageUrl } from '../utils/storage';
+import { imageUrl, imageFallback } from '../utils/storage';
 
 export default function Hero() {
   const navigate = useNavigate();
@@ -67,6 +67,7 @@ export default function Hero() {
               <img
                 src={imageUrl(b.imageUrl, 1600)}
                 alt={b.title || 'Nova Wear kampanya görseli'}
+                onError={imageFallback}
                 style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
               />
             </div>
@@ -131,7 +132,7 @@ export default function Hero() {
               yüklenene kadar burada markanın logosu duruyor. */}
           <div className="nw-hero-media">
             {heroImg ? (
-              <img src={imageUrl(heroImg, 1200)} alt="Nova Wear yeni sezon koleksiyonu" />
+              <img src={imageUrl(heroImg, 1200)} alt="Nova Wear yeni sezon koleksiyonu" onError={imageFallback} />
             ) : (
               <div className="nw-hero-brand">
                 <Logo size="hero" layout="stack" />

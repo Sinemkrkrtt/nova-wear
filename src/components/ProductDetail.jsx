@@ -20,7 +20,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 // EKLENDİ: Tekil ürünü çekmek için doc ve getDoc eklendi
 import { collection, getDocs, query, orderBy, limit, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../src/config/firebase';
-import { imageUrl } from '../utils/storage';
+import { imageUrl, imageFallback } from '../utils/storage';
 
 function ProductDetail() {
     const location = useLocation();
@@ -337,7 +337,7 @@ function ProductDetail() {
                             </IconButton>
                         )}
 
-                        <Box component="img" src={imageUrl(displayImages[currentImageIndex], 1000)} alt={product.name}
+                        <Box component="img" src={imageUrl(displayImages[currentImageIndex], 1000)} alt={product.name} onError={imageFallback}
                             sx={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", transition: "transform 0.4s ease-in-out", "&:hover": { transform: "scale(1.03)" }, filter: isOutOfStock ? "grayscale(40%)" : "none" }}
                         />
 
@@ -513,7 +513,7 @@ function ProductDetail() {
                                             </IconButton>
 
                                             <Box sx={{ width: "100%", paddingTop: "133.33%", position: "relative", overflow: "hidden", bgcolor: "var(--nw-bg-elev)" }}>
-                                                <CardMedia className="product-image" component="img" image={imageUrl(cardImage, 500)} alt={item.name} sx={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", transition: "transform 0.5s ease", filter: cardOutOfStock ? "grayscale(40%)" : "none" }} />
+                                                <CardMedia className="product-image" component="img" image={imageUrl(cardImage, 500)} alt={item.name} onError={imageFallback} sx={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", transition: "transform 0.5s ease", filter: cardOutOfStock ? "grayscale(40%)" : "none" }} />
                                             </Box>
 
                                             <CardContent sx={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", p: { xs: 1.5, md: 2.5 } }}>
