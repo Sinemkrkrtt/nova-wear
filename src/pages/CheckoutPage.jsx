@@ -7,7 +7,7 @@ import {
 import { VerifiedUserOutlined, ShoppingBagOutlined, HelpOutlineOutlined as HelpOutline } from '@mui/icons-material';
 
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth, appCheckHeaders, FUNCTIONS_BASE_URL } from '../../src/config/firebase';
+import { auth, appCheckHeaders, authHeaders, FUNCTIONS_BASE_URL } from '../../src/config/firebase';
 import { createCodOrder, COD_MAX_TOTAL } from '../utils/orderApi';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -121,8 +121,9 @@ export default function CheckoutPage() {
             const fullAddress = `${formData.address} ${formData.apartment ? ', ' + formData.apartment : ''} - ${formData.district}/${formData.city}`;
             const formattedPhone = `+90${formData.phone.replace(/\s+/g, '')}`;
 
+            // userId GÖNDERİLMEZ: sunucu sipariş sahibini Authorization
+            // başlığındaki doğrulanmış token'dan çözer.
             const paymentData = {
-                userId: auth.currentUser?.uid || "GUEST_" + Date.now(),
                 email: formData.email,
                 userName: formData.firstName,
                 userSurname: formData.lastName,
@@ -147,9 +148,10 @@ export default function CheckoutPage() {
             }
 
             const acHeaders = await appCheckHeaders();
+            const idHeaders = await authHeaders();
             const response = await fetch(`${FUNCTIONS_BASE_URL}/createPayment`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", ...acHeaders },
+                headers: { "Content-Type": "application/json", ...acHeaders, ...idHeaders },
                 body: JSON.stringify({ data: paymentData })
             });
 

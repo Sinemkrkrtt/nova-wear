@@ -5,7 +5,7 @@ import {
     useMediaQuery, useTheme
 } from '@mui/material';
 import { CloseRounded, LockOutlined, HelpOutlineOutlined as HelpOutline, ShieldOutlined } from '@mui/icons-material';
-import { appCheckHeaders, FUNCTIONS_BASE_URL } from '../../src/config/firebase';
+import { appCheckHeaders, authHeaders, FUNCTIONS_BASE_URL } from '../../src/config/firebase';
 import { createCodOrder, COD_MAX_TOTAL } from '../utils/orderApi';
 import BRAND from '../config/brand';
 
@@ -137,7 +137,7 @@ export default function CheckoutModal({
             const formattedPhone = `+90${formData.phone.replace(/\D/g, '')}`;
 
             const paymentData = {
-                userId: user?.uid || ("GUEST_" + Date.now()),
+                // userId gönderilmez: sunucu doğrulanmış token'dan çözer.
                 email: formData.email,
                 userName: formData.firstName,
                 userSurname: formData.lastName,
@@ -162,9 +162,10 @@ export default function CheckoutModal({
             }
 
             const acHeaders = await appCheckHeaders();
+            const idHeaders = await authHeaders();
             const response = await fetch(`${FUNCTIONS_BASE_URL}/createPayment`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", ...acHeaders },
+                headers: { "Content-Type": "application/json", ...acHeaders, ...idHeaders },
                 body: JSON.stringify({ data: paymentData })
             });
             const result = await response.json();

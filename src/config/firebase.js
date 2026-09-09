@@ -77,6 +77,21 @@ export const FUNCTIONS_BASE_URL =
     : "");
 
 export const auth = getAuth(app);
+
+// Giriş yapılmışsa Cloud Functions çağrılarına eklenecek kimlik başlığını
+// üretir. Sunucu sipariş sahibini BU token'dan çözer; istemcinin gönderdiği
+// bir kullanıcı kimliğine güvenilmez. Misafir alışverişte boş döner.
+export async function authHeaders() {
+  const user = auth.currentUser;
+  if (!user) return {};
+  try {
+    return { Authorization: `Bearer ${await user.getIdToken()}` };
+  } catch (e) {
+    // Token alınamazsa misafir siparişi olarak devam edilir.
+    return {};
+  }
+}
+
 export const db = getFirestore(app);
 
 // Analytics yalnızca gerçek yapılandırma varsa ve tarayıcı destekliyorsa

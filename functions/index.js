@@ -477,6 +477,7 @@ exports.createPayment = functions.https.onRequest((req, res) => {
       const city = sanitizeString(data.city, 100, "Istanbul");
       const address = sanitizeString(data.address, 500, "Adres belirtilmedi");
       const identityNumber = sanitizeString(data.identityNumber, 11, "11111111111"); // TC KİMLİK EKLENDİ
+      const verifiedUid = await verifyOptionalUser(req);
       const priceStr = order.total.toFixed(2);
       const conversationId = ORDER_PREFIX + Date.now();
 
@@ -518,7 +519,12 @@ exports.createPayment = functions.https.onRequest((req, res) => {
         shipping: order.shipping,
         discount: order.discount,
         appliedCoupon: order.appliedCoupon,
-        userId: sanitizeString(data.userId, 128, "") || null,
+        // Sipariş sahibi DOĞRULANMIŞ token'dan alınır; istemcinin gönderdiği
+        // userId'ye güvenilmez. Aksi halde kurbanın kimliğini bilen biri, ona
+        // ait görünen sahte sipariş yazdırabiliyordu (createCodOrder bunu
+        // zaten doğru yapıyordu, aynı kalıp uygulandı).
+        userId: verifiedUid || null,
+        guest: !verifiedUid,
         customerName: fullName,
         email: email,
         phone: gsm,
