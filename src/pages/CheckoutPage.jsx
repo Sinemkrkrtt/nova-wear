@@ -100,12 +100,21 @@ export default function CheckoutPage() {
 
         try {
             const payloadItems = cartItems.map(item => {
-                const variantText = item.selectedSize || item.variant || [item.color, item.size].filter(Boolean).join(' / ') || '';
+                // Beden ve rengi AYRI alanlar olarak göndermek zorunlu: sunucu
+                // stok kontrolünü ve stok düşümünü it.size / it.color üzerinden
+                // yapıyor. Eskiden yalnızca birleşik 'variant' metni
+                // gönderiliyordu; sunucu bedeni göremediği için stok hiç
+                // düşmüyor, tükenmiş ürün satılmaya devam ediyordu.
+                const itemColor = item.color || item.selectedColor || item.renk || "";
+                const itemSize = item.selectedSize || item.size || item.variant || "";
+                const variantText = [itemColor, itemSize].filter(Boolean).join(' / ');
                 return {
                     id: item.id,
                     name: item.name,
                     quantity: item.quantity || 1,
-                    variant: variantText
+                    variant: variantText,
+                    color: itemColor,
+                    size: itemSize
                 };
             });
 

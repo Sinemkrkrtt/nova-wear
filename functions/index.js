@@ -300,39 +300,59 @@ async function computeAuthoritativeOrder(rawItems, couponCode, buyerEmail) {
   return {lineItems, subtotal, shipping, discount, appliedCoupon, couponOncePerUser, total, stockIssues};
 }
 
-// Belirli bir varyant (renk/beden) için kullanılabilir stok adedini döndürür.
-// Varyant bulunamazsa toplam stoğa, hiç varyant yoksa 0'a düşer.
+const vkey = (v) => (v || "").toString().trim().toLowerCase();
+
+// Sipariş satırındaki beden/renk için ürünün varyant indeksini çözer.
+// Çözülemezse -1 döner ve çağıranlar bunu "stok yok" olarak ele alır.
+//
+// ÖNEMLİ: Burası daha önce eşleşme bulamayınca TÜM bedenlerin stok toplamına
+// düşüyordu. Bu, olmayan bir beden gönderilerek (ör. size:"ZZZ") tükenmiş
+// ürünün sınırsız sipariş edilebilmesine yol açıyordu; stok da hiç düşmüyordu.
+// Artık belirsizlik varsa sipariş reddedilir.
+function resolveVariantIndex(variants, size, color) {
+  const wantSize = vkey(size);
+  const wantColor = vkey(color);
+
+  if (wantSize) {
+    let i = variants.findIndex((v) =>
+      vkey(v.size) === wantSize && (!wantColor || vkey(v.color) === wantColor));
+    if (i < 0) i = variants.findIndex((v) => vkey(v.size) === wantSize);
+    if (i >= 0) return i;
+  }
+
+  // Beden eşleşmedi ya da hiç gönderilmedi: renk tek bir varyanta işaret
+  // ediyorsa onu kullan.
+  if (wantColor) {
+    const eslesen = variants.filter((v) => vkey(v.color) === wantColor);
+    if (eslesen.length === 1) return variants.indexOf(eslesen[0]);
+  }
+
+  // Tek varyantlı ürünlerde (bedeni olmayan aksesuarlar gibi) belirsizlik yok.
+  if (variants.length === 1) return 0;
+
+  return -1;
+}
+
+// Belirli bir varyant için kullanılabilir stok. Varyant çözülemezse 0 döner —
+// böylece computeAuthoritativeOrder siparişi "stok yetersiz" diye reddeder.
 function availableStockFor(product, size, color) {
   const variants = Array.isArray(product.variants) ? product.variants : [];
   if (!variants.length) return 0;
-  const wantSize = (size || "").toString().trim().toLowerCase();
-  const wantColor = (color || "").toString().trim().toLowerCase();
-  if (wantSize) {
-    let vm = variants.find((v) =>
-      (v.size || "").toString().trim().toLowerCase() === wantSize &&
-      (!wantColor || (v.color || "").toString().trim().toLowerCase() === wantColor));
-    if (!vm) vm = variants.find((v) => (v.size || "").toString().trim().toLowerCase() === wantSize);
-    if (vm) return Number(vm.stock) || 0;
-  }
-  return variants.reduce((acc, v) => acc + (Number(v.stock) || 0), 0);
+  const idx = resolveVariantIndex(variants, size, color);
+  if (idx < 0) return 0;
+  return Number(variants[idx].stock) || 0;
 }
 
 // Satın alınan varyantın stoğunu düşer; güncellenmiş variants dizisini döndürür.
+// Satın alınan varyantın stoğunu düşer.
+// Varyant çözülemezse NULL döner — eskiden diziyi değişmeden döndürüyordu ve
+// çağıran taraf aynı stoğu geri yazarak stok düşmüş gibi davranıyordu.
 function decrementVariantStock(product, size, color, qty) {
   const variants = Array.isArray(product.variants) ? product.variants.map((v) => ({...v})) : [];
-  if (!variants.length) return variants;
-  const wantSize = (size || "").toString().trim().toLowerCase();
-  const wantColor = (color || "").toString().trim().toLowerCase();
-  let idx = -1;
-  if (wantSize) {
-    idx = variants.findIndex((v) =>
-      (v.size || "").toString().trim().toLowerCase() === wantSize &&
-      (!wantColor || (v.color || "").toString().trim().toLowerCase() === wantColor));
-    if (idx < 0) idx = variants.findIndex((v) => (v.size || "").toString().trim().toLowerCase() === wantSize);
-  }
-  if (idx >= 0) {
-    variants[idx].stock = Math.max(0, (Number(variants[idx].stock) || 0) - qty);
-  }
+  if (!variants.length) return null;
+  const idx = resolveVariantIndex(variants, size, color);
+  if (idx < 0) return null;
+  variants[idx].stock = Math.max(0, (Number(variants[idx].stock) || 0) - qty);
   return variants;
 }
 
@@ -666,7 +686,16 @@ exports.paymentCallback = functions.https.onRequest((req, res) => {
             // Stok yetmiyorsa eksiye düşürme (floor 0) + siparişi işaretle.
             if (availableStockFor(product, it.size, it.color) < qty) fulfillmentIssue = true;
             if (Array.isArray(product.variants) && product.variants.length) {
-              tx.set(ref, {variants: decrementVariantStock(product, it.size, it.color, qty), soldCount: inc(qty)}, {merge: true});
+              const yeniVaryantlar = decrementVariantStock(product, it.size, it.color, qty);
+              if (yeniVaryantlar) {
+                tx.set(ref, {variants: yeniVaryantlar, soldCount: inc(qty)}, {merge: true});
+              } else {
+                // Varyant çözülemedi: stok düşülemiyor. Ödeme alınmış durumda,
+                // bu yüzden sipariş iptal edilmez ama elle incelenmek üzere
+                // işaretlenir. Sessizce "düşmüş gibi" davranmak yasak.
+                fulfillmentIssue = true;
+                tx.set(ref, {soldCount: inc(qty)}, {merge: true});
+              }
             } else {
               tx.set(ref, {soldCount: inc(qty)}, {merge: true});
             }
@@ -837,12 +866,20 @@ exports.createCodOrder = functions.https.onRequest((req, res) => {
 
         // --- SONRA YAZMALAR ---
         const inc = admin.firestore.FieldValue.increment;
+        let fulfillmentIssue = false;
         for (const {li, ref, snap} of productReads) {
           if (!snap.exists) continue;
           const product = snap.data();
           const qty = Math.max(1, parseInt(li.quantity, 10) || 1);
           if (Array.isArray(product.variants) && product.variants.length) {
-            tx.set(ref, {variants: decrementVariantStock(product, li.size, li.color, qty), soldCount: inc(qty)}, {merge: true});
+            const yeniVaryantlar = decrementVariantStock(product, li.size, li.color, qty);
+            if (yeniVaryantlar) {
+              tx.set(ref, {variants: yeniVaryantlar, soldCount: inc(qty)}, {merge: true});
+            } else {
+              // Varyant çözülemedi: stok düşülemiyor, sipariş elle incelenmeli.
+              fulfillmentIssue = true;
+              tx.set(ref, {soldCount: inc(qty)}, {merge: true});
+            }
           } else {
             tx.set(ref, {soldCount: inc(qty)}, {merge: true});
           }
@@ -873,6 +910,7 @@ exports.createCodOrder = functions.https.onRequest((req, res) => {
           paymentMethod: "kapida",
           paymentStatus: "pending", // teslimatta tahsil edilecek
           soldCounted: true, // stok bu akışta düşüldü
+          fulfillmentIssue: fulfillmentIssue, // varyant çözülemediyse elle inceleme
           userId: verifiedUid || null,
           guest: !verifiedUid,
           customerName: fullName,
