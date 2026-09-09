@@ -250,7 +250,7 @@ function ProductDetail() {
                     {displayImages.length > 1 && (
                         <Stack direction={{ xs: "row", md: "column" }} spacing={1.5} sx={{ overflowY: { xs: 'hidden', md: 'auto' }, overflowX: { xs: 'auto', md: 'hidden' }, pr: { md: 1 }, pb: { xs: 1, md: 0 }, height: { md: "100%" }, '&::-webkit-scrollbar': { width: '4px', height: '4px' }, '&::-webkit-scrollbar-thumb': { bgcolor: colors.border, borderRadius: '4px' } }}>
                             {displayImages.map((img, index) => (
-                                <Box key={index} onClick={() => setCurrentImageIndex(index)} component="img" src={img} sx={{ width: { xs: "65px", md: "80px" }, minWidth: { xs: "65px", md: "80px" }, height: { xs: "85px", md: "110px" }, objectFit: "cover", objectPosition: "top center", borderRadius: "8px", cursor: "pointer", border: currentImageIndex === index ? `2px solid ${colors.primary}` : `1px solid transparent`, opacity: currentImageIndex === index ? 1 : 0.6, transition: "all 0.2s ease-in-out", '&:hover': { opacity: 1, transform: "scale(1.05)" } }} />
+                                <Box key={index} onClick={() => setCurrentImageIndex(index)} component="img" src={imageUrl(img, 200)} onError={imageFallback} sx={{ width: { xs: "65px", md: "80px" }, minWidth: { xs: "65px", md: "80px" }, height: { xs: "85px", md: "110px" }, objectFit: "cover", objectPosition: "top center", borderRadius: "8px", cursor: "pointer", border: currentImageIndex === index ? `2px solid ${colors.primary}` : `1px solid transparent`, opacity: currentImageIndex === index ? 1 : 0.6, transition: "all 0.2s ease-in-out", '&:hover': { opacity: 1, transform: "scale(1.05)" } }} />
                             ))}
                         </Stack>
                     )}
