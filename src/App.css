@@ -147,16 +147,26 @@ body {
   aspect-ratio: 16 / 11;
   /* Zemin siyah kalıyor ama alan boş bir delik gibi durmasın diye arkada
      yumuşak bir mor ışıma ve saç teli inceliğinde bir çerçeve var. */
+  /* Üç katman:
+       1) içerideki mor ışıma        (padding-box)
+       2) siyah zemin                (padding-box)
+       3) çerçevenin kendisi         (border-box)
+     3. katman yalnızca 1px'lik kenar şeridinde görünür; degrade olduğu için
+     çerçeve üstte parlak, aşağı inerken sönümleniyor — düz bir çizgiden çok
+     ışığın kenara vurması gibi duruyor. */
   background:
-    radial-gradient(380px 250px at 50% 46%, var(--nw-accent-soft), transparent 72%),
-    var(--nw-bg);
-  /* Çerçeve ve dışa taşan hâle vurgu renginde: alan siyah kalırken kenarları
-     mor ışıkla belirginleşiyor. */
-  border: 1px solid rgba(155, 112, 255, 0.30);
+    radial-gradient(400px 260px at 50% 44%, var(--nw-accent-soft), transparent 72%) padding-box,
+    linear-gradient(var(--nw-bg), var(--nw-bg)) padding-box,
+    linear-gradient(155deg,
+      rgba(155, 112, 255, 0.60) 0%,
+      rgba(155, 112, 255, 0.16) 42%,
+      rgba(255, 255, 255, 0.07) 100%) border-box;
+  border: 1px solid transparent;
   border-radius: var(--nw-r-lg);
+  /* Hâle hafif aşağı kaydırıldı: kutu zeminin üzerinde duruyormuş hissi. */
   box-shadow:
-    0 0 0 1px rgba(155, 112, 255, 0.07),
-    0 0 70px -12px rgba(155, 112, 255, 0.45);
+    0 26px 80px -26px rgba(155, 112, 255, 0.45),
+    0 0 130px -40px rgba(155, 112, 255, 0.35);
 }
 
 /* Logo görselinin zemini saf siyah olduğu için 'screen' karışımında o siyah
