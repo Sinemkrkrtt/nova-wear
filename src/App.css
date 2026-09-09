@@ -148,11 +148,15 @@ body {
   /* Zemin siyah kalıyor ama alan boş bir delik gibi durmasın diye arkada
      yumuşak bir mor ışıma ve saç teli inceliğinde bir çerçeve var. */
   background:
-    radial-gradient(360px 240px at 50% 46%, var(--nw-accent-soft), transparent 72%),
+    radial-gradient(380px 250px at 50% 46%, var(--nw-accent-soft), transparent 72%),
     var(--nw-bg);
-  border: 1px solid var(--nw-line);
+  /* Çerçeve ve dışa taşan hâle vurgu renginde: alan siyah kalırken kenarları
+     mor ışıkla belirginleşiyor. */
+  border: 1px solid rgba(155, 112, 255, 0.30);
   border-radius: var(--nw-r-lg);
-  box-shadow: none;
+  box-shadow:
+    0 0 0 1px rgba(155, 112, 255, 0.07),
+    0 0 70px -12px rgba(155, 112, 255, 0.45);
 }
 
 /* Logo görselinin zemini saf siyah olduğu için 'screen' karışımında o siyah
