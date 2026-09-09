@@ -145,6 +145,12 @@ body {
   align-self: center;
   min-height: 0;
   aspect-ratio: 16 / 11;
+  /* Logo görselinin kendi zemini de saf siyah — sayfanın zeminiyle aynı.
+     Bu yüzden kutu çizilmiyor: logo, kendi ışımasıyla zeminden ayrılıyor. */
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .nw-hero-media img {

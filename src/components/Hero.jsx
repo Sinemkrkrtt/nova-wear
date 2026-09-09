@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchBanners, fetchHeroImage } from '../utils/catalog';
-import heroLogo from '../assets/hero-logo.jpg';
+import heroLogo from '../assets/hero-logo.png';
 import { imageUrl, imageFallback } from '../utils/storage';
 
 export default function Hero() {
