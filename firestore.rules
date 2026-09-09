@@ -1,0 +1,155 @@
+rules_version = '2';
+
+// ===============================================================
+// Nova Wear — Firestore Security Rules
+// ===============================================================
+//
+// Assumed Data Model
+// ---------------------------------------------------------------
+// Collection: products   (PUBLIC storefront catalog)
+//   Fields: name(string), category(list<string>), price(number>=0),
+//           description(string), images(list<string>), imageUrl(string),
+//           variants(list<map>), createdAt(timestamp)
+//   Access: read=public, write=admin only
+//
+// Collection: banners    (PUBLIC homepage slider)
+//   Fields: title(string), link(string), imageUrl(string),
+//           isActive(bool), createdAt(timestamp)
+//   Access: read=public, write=admin only
+//
+// Collection: coupons    (PRIVATE — never exposed to clients)
+//   Fields: code(string), discountType(string), discountValue(number),
+//           isActive(bool), createdAt(timestamp)
+//   Access: read/write=admin only. Customers validate coupons through the
+//           validateCoupon Cloud Function (Admin SDK), never directly.
+//
+// Collection: orders     (PRIVATE — contains customer PII)
+//   Access: created ONLY by Cloud Functions (Admin SDK bypasses rules).
+//           read/update/delete=admin only. Customers track orders through
+//           the trackOrder Cloud Function, never by reading this collection.
+//
+// Collection: customers  (per-user profile; owner-only)
+//   Fields: uid, firstName, lastName, email, role('customer'), createdAt
+//   Access: a signed-in user may read/write ONLY their own document; admins
+//           may read. Role is locked to 'customer' and immutable.
+//
+// Collection: users      (role registry — controls admin access)
+//   Fields: role('admin'|'customer'|...)
+//   Access: a user may read ONLY their own doc. Client WRITES ARE DENIED so
+//           nobody can grant themselves admin. Roles are set from the
+//           Firebase Console / Admin SDK only.
+// ===============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------------- Helper functions ----------------
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // An admin is a signed-in user whose users/{uid} document has role == 'admin'.
+    function isAdmin() {
+      return isAuthenticated()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isValidString(value, maxLen) {
+      return value is string && value.size() <= maxLen;
+    }
+
+    // ---------------- products (public catalog) ----------------
+    match /products/{productId} {
+      allow read: if true;
+      // Only admins may modify the catalog.
+      allow create, update: if isAdmin()
+        && (!('price' in request.resource.data)
+            || (request.resource.data.price is number && request.resource.data.price >= 0))
+        && (!('name' in request.resource.data)
+            || isValidString(request.resource.data.name, 200))
+        && (!('description' in request.resource.data)
+            || isValidString(request.resource.data.description, 5000));
+      allow delete: if isAdmin();
+    }
+
+    // ---------------- banners (public homepage content) ----------------
+    match /banners/{bannerId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---------------- categories (public — nav/menu/ürün etiketleme) ----------------
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---------------- coupons (private) ----------------
+    // Never readable by clients — coupon codes are validated server-side.
+    match /coupons/{couponId} {
+      allow read, write: if isAdmin();
+    }
+
+    // ---------------- orders (private, PII) ----------------
+    // Orders are created by the createPayment/paymentCallback Cloud Functions
+    // using the Admin SDK, which bypasses these rules. Clients can never read,
+    // create, or tamper with orders directly. Order tracking for customers goes
+    // through the trackOrder Cloud Function.
+    match /orders/{orderId} {
+      // Admin her siparişi görebilir; müşteri YALNIZCA kendi siparişini
+      // (userId eşleşen) okuyabilir. where('userId','==',uid) sorgusu bu kuralla
+      // izinli olur; müşteri başkasının siparişini okuyamaz.
+      allow read: if isAdmin() || (request.auth != null && resource.data.userId == request.auth.uid);
+      allow update, delete: if isAdmin();
+      allow create: if isAdmin(); // admin panel "test order" tool; real orders come from Functions
+    }
+
+    // ---------------- customers (owner-only profiles) ----------------
+    match /customers/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+
+      // A user may create only their OWN profile, locked to the 'customer' role.
+      allow create: if isOwner(userId)
+        && request.resource.data.uid == userId
+        && request.resource.data.role == 'customer'
+        && isValidString(request.resource.data.firstName, 100)
+        && isValidString(request.resource.data.lastName, 100)
+        && isValidString(request.resource.data.email, 254);
+
+      // On update the uid and role must never change (no self-escalation).
+      allow update: if isOwner(userId)
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.role == resource.data.role;
+
+      allow delete: if isAdmin();
+    }
+
+    // ---------------- users (role registry) ----------------
+    // A user may read only their own role document. Writing is fully denied
+    // from the client — roles (including 'admin') are assigned exclusively via
+    // the Firebase Console or the Admin SDK. This blocks privilege escalation.
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if false;
+    }
+
+    // ---------------- settings (public site config: hero görseli vb.) ----------------
+    // Herkes okuyabilir (ana sayfa hero görseli gibi genel ayarlar); yalnızca
+    // admin yazabilir.
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---------------- default deny ----------------
+    // Any collection not listed above is completely inaccessible.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

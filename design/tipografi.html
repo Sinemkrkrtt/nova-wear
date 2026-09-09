@@ -1,0 +1,206 @@
+<meta charset="utf-8">
+<title>Nova Wear — Tipografi Seçenekleri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Manrope:wght@300;400;500;600;700&family=Unbounded:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #131316; --elev: #1A1A20; --surface: #202027; --surface2: #2A2A33;
+    --line: rgba(255,255,255,.09); --line2: rgba(255,255,255,.17);
+    --text: #F4F4F7; --dim: #A2A2AE; --faint: #6E6E7B;
+    --accent: #9B70FF; --accent-soft: rgba(155,112,255,.16); --on-accent: #150A26;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: Inter, sans-serif; }
+
+  .top {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(19,19,22,.93); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--line); padding: 16px 24px;
+  }
+  .top h1 { font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
+  .top p { color: var(--faint); font-size: 12.5px; margin-top: 4px; }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 24px 80px; }
+
+  .opt { margin-bottom: 30px; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: var(--elev); }
+  .opt > header {
+    padding: 16px 22px; border-bottom: 1px solid var(--line);
+    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+    background: var(--surface);
+  }
+  .opt > header b { font-size: 14px; font-weight: 600; }
+  .opt > header .meta { color: var(--faint); font-size: 12px; }
+  .opt > header .pick {
+    margin-left: auto; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 3px 10px;
+  }
+  .body { padding: 30px 26px 32px; }
+
+  /* --- ortak yapı, font değişkeni her seçenekte farklı --- */
+  .logo { font-family: var(--display); font-weight: 700; font-size: 25px; letter-spacing: -.03em; margin-bottom: 26px; }
+  .logo span { color: var(--accent); }
+
+  .eyebrow {
+    font-family: var(--body); font-size: 11px; font-weight: 600; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 14px;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .eyebrow::before { content: ""; width: 24px; height: 1px; background: var(--accent); }
+
+  h2.hero {
+    font-family: var(--display); font-size: 52px; line-height: .99; font-weight: 700;
+    letter-spacing: -.03em; margin-bottom: 18px;
+  }
+  h2.hero .out { color: transparent; -webkit-text-stroke: 1.5px var(--accent); }
+
+  p.lead { font-family: var(--body); color: var(--dim); font-size: 15px; line-height: 1.7; max-width: 430px; margin-bottom: 24px; }
+
+  .btns { display: flex; gap: 10px; margin-bottom: 34px; flex-wrap: wrap; }
+  .btn {
+    font-family: var(--body); font-size: 13.5px; font-weight: 600;
+    padding: 13px 24px; border-radius: 999px; border: 1px solid transparent; cursor: pointer;
+    background: var(--accent); color: var(--on-accent);
+  }
+  .btn.ghost { background: transparent; color: var(--text); border-color: var(--line2); }
+
+  h3.sec { font-family: var(--display); font-size: 26px; font-weight: 700; letter-spacing: -.025em; margin-bottom: 4px; }
+  .sub { font-family: var(--body); color: var(--faint); font-size: 13px; margin-bottom: 18px; }
+
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 30px; }
+  .card .ph { aspect-ratio: 3/4; border-radius: 14px; border: 1px solid var(--line); position: relative; }
+  .card .ph i {
+    position: absolute; top: 10px; left: 10px; font-style: normal;
+    font-family: var(--body); background: var(--accent); color: var(--on-accent);
+    font-size: 10px; font-weight: 700; letter-spacing: .1em; padding: 5px 10px; border-radius: 999px;
+  }
+  .card h4 { font-family: var(--body); font-size: 14px; font-weight: 500; margin: 12px 0 7px; }
+  .card .price { font-family: var(--display); font-size: 16px; font-weight: 700; }
+
+  .ph.p1 { background: linear-gradient(150deg,#3a3a44,#22222a); }
+  .ph.p2 { background: linear-gradient(150deg,#33424a,#26313a); }
+  .ph.p3 { background: linear-gradient(150deg,#4a4238,#332e28); }
+
+  /* Türkçe karakter denetimi */
+  .glyphs {
+    border-top: 1px solid var(--line); padding-top: 18px;
+    display: grid; gap: 8px;
+  }
+  .glyphs .row { display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; }
+  .glyphs .lbl { font-family: Inter, sans-serif; font-size: 11px; color: var(--faint); width: 92px; flex-shrink: 0; }
+  .glyphs .d { font-family: var(--display); font-size: 21px; font-weight: 700; letter-spacing: .02em; }
+  .glyphs .b { font-family: var(--body); font-size: 15px; }
+  .verdict { font-family: Inter, sans-serif; font-size: 12px; margin-top: 12px; }
+  .ok { color: #3DD68C; } .bad { color: #FF5F5F; }
+
+  /* --- Seçenek fontları --- */
+  .a { --display: 'Syne', sans-serif;                --body: 'Manrope', sans-serif; }
+  .b { --display: 'Unbounded', sans-serif;           --body: 'Inter', sans-serif; }
+  .c { --display: 'Bricolage Grotesque', sans-serif; --body: 'DM Sans', sans-serif; }
+  .now { --display: 'Space Grotesk', sans-serif;     --body: 'Inter', sans-serif; }
+</style>
+
+<div class="top">
+  <h1>Nova Wear — tipografi seçenekleri</h1>
+  <p>Aynı içerik, dört farklı font eşleşmesiyle. A seçeneği siteye uygulandı; B veya C istersen tek satırla değişir.</p>
+</div>
+
+<div class="wrap" id="wrap">
+
+  <section class="opt a">
+    <header>
+      <b>A — Syne + Manrope</b>
+      <span class="meta">sanat/moda dünyasının fontu · geniş, tuhaf, akılda kalıcı · ₺ simgesi Manrope'tan geliyor</span>
+      <span class="pick">uygulandı</span>
+    </header>
+    <div class="body"></div>
+  </section>
+
+  <section class="opt b">
+    <header>
+      <b>B — Unbounded + Inter</b>
+      <span class="meta">geometrik ve fütüristik · "nova" ismine yakışan teknolojik hava</span>
+    </header>
+    <div class="body"></div>
+  </section>
+
+  <section class="opt c">
+    <header>
+      <b>C — Bricolage Grotesque + DM Sans</b>
+      <span class="meta">çağdaş editoryal · sıcak ve karakterli, daha az riskli</span>
+    </header>
+    <div class="body"></div>
+  </section>
+
+  <section class="opt now">
+    <header>
+      <b>Space Grotesk + Inter</b>
+      <span class="meta">önceki hâli — karşılaştırma için</span>
+    </header>
+    <div class="body"></div>
+  </section>
+
+</div>
+
+<script>
+  const TPL = `
+    <div class="logo">nova<span>wear</span></div>
+    <div class="eyebrow">Sonbahar / Kış 2026</div>
+    <h2 class="hero">Günlük giyime<br><span class="out">yeni</span> bir standart</h2>
+    <p class="lead">Doğru kumaş, doğru kesim, abartısız tasarım. Her gün giyebileceğin
+       parçalar — sezon geçse de eskimeyen.</p>
+    <div class="btns">
+      <button class="btn">Koleksiyonu keşfet</button>
+      <button class="btn ghost">Yeni gelenler</button>
+    </div>
+
+    <h3 class="sec">Yeni gelenler</h3>
+    <div class="sub">Bu sezon rafa çıkan son parçalar</div>
+    <div class="cards">
+      <div class="card"><div class="ph p1"><i>YENİ</i></div><h4>Oversize Kapüşonlu Sweatshirt</h4><div class="price">1.290 ₺</div></div>
+      <div class="card"><div class="ph p2"></div><h4>Yıkamalı Denim Ceket</h4><div class="price">2.450 ₺</div></div>
+      <div class="card"><div class="ph p3"></div><h4>Şardonlu Jogger Eşofman</h4><div class="price">890 ₺</div></div>
+    </div>
+
+    <div class="glyphs">
+      <div class="row"><span class="lbl">Başlık fontu</span>
+        <span class="d">ĞÜŞİÖÇ ğüşıöç — İSTANBUL ŞİŞLİ ÇAĞLAYAN</span></div>
+      <div class="row"><span class="lbl">Gövde fontu</span>
+        <span class="b">Ğüşiöç ğüşıöç — İstanbul, Şişli, Çağlayan · 1.290 ₺</span></div>
+      <div class="verdict"></div>
+    </div>`;
+
+  document.querySelectorAll('.opt .body').forEach(el => el.innerHTML = TPL);
+
+  // --- Türkçe karakter denetimi -------------------------------------------
+  // Bir font ğ/ş/İ içermiyorsa tarayıcı yedek fonta düşer. Bunu anlamak için
+  // aynı metni font ile ve yalnızca yedek font ile ölçüp genişlikleri
+  // karşılaştırıyoruz: eşitlerse glif gerçekten yok demektir.
+  function hasGlyphs(family, text) {
+    const c = document.createElement('canvas').getContext('2d');
+    c.font = `700 40px "${family}", monospace`;
+    const withFont = c.measureText(text).width;
+    c.font = '700 40px monospace';
+    const fallback = c.measureText(text).width;
+    return Math.abs(withFont - fallback) > 0.5;
+  }
+
+  const FONTS = {
+    a: ['Syne', 'Manrope'], b: ['Unbounded', 'Inter'],
+    c: ['Bricolage Grotesque', 'DM Sans'], now: ['Space Grotesk', 'Inter'],
+  };
+  const TR = 'ğşıİĞŞÇÖÜ';
+
+  document.fonts.ready.then(() => {
+    Object.entries(FONTS).forEach(([cls, [disp, body]]) => {
+      const sec = document.querySelector('.opt.' + cls);
+      const v = sec.querySelector('.verdict');
+      const okD = hasGlyphs(disp, TR), okB = hasGlyphs(body, TR);
+      v.innerHTML = (okD && okB)
+        ? `<span class="ok">✓ Türkçe karakterler her iki fontta da mevcut</span>`
+        : `<span class="bad">✕ Eksik Türkçe karakter: ${!okD ? disp : ''} ${!okB ? body : ''}</span>`;
+      sec.dataset.tr = (okD && okB) ? 'ok' : 'bad';
+    });
+  });
+</script>

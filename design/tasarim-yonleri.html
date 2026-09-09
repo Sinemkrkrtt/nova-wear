@@ -1,0 +1,340 @@
+<meta charset="utf-8">
+<title>Nova Wear — Tasarım Yönleri</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #16161a; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+
+  /* ---------- ÜST SEÇİCİ ---------- */
+  .switcher {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(14,14,17,.92); backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    padding: 14px 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  }
+  .switcher .lbl { color: #71717a; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; margin-right: 6px; }
+  .switcher button {
+    font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+    padding: 9px 18px; border-radius: 999px; border: 1px solid rgba(255,255,255,.14);
+    background: transparent; color: #a1a1aa; transition: all .18s;
+  }
+  .switcher button:hover { color: #fff; border-color: rgba(255,255,255,.3); }
+  .switcher button[data-on="1"] { background: #fff; color: #111; border-color: #fff; }
+
+  .stage { max-width: 1180px; margin: 26px auto 60px; padding: 0 20px; }
+  .frame {
+    border-radius: 14px; overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,.5);
+    display: none;
+  }
+  .frame[data-on="1"] { display: block; }
+  .note {
+    max-width: 1180px; margin: 0 auto 18px; padding: 0 20px;
+    color: #a1a1aa; font-size: 14px; line-height: 1.65;
+  }
+  .note b { color: #fff; font-weight: 600; }
+  .note .tag { display:inline-block; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:#71717a; border:1px solid rgba(255,255,255,.14); border-radius:999px; padding:3px 10px; margin-right:8px; }
+
+  /* ================================================================
+     YÖN A — STREETWEAR / CESUR
+     ================================================================ */
+  .a { background: #0a0a0a; color: #fff; font-family: "Helvetica Neue", Arial, sans-serif; }
+  .a .topbar {
+    background: #ccff00; color: #0a0a0a; overflow: hidden; white-space: nowrap;
+    font-size: 11px; font-weight: 800; letter-spacing: .18em; padding: 9px 0;
+  }
+  .a .ticker { display: inline-block; animation: slide 18s linear infinite; }
+  .a .ticker span { padding: 0 22px; }
+  @keyframes slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  .a .nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 34px; border-bottom: 1px solid #1f1f1f; }
+  .a .logo { font-family: Impact, "Haettenschweiler", "Arial Black", sans-serif; font-size: 27px; letter-spacing: .04em; }
+  .a .logo em { font-style: normal; color: #ccff00; }
+  .a .nav ul { display: flex; gap: 28px; list-style: none; font-size: 12px; font-weight: 700; letter-spacing: .14em; }
+  .a .nav ul li { color: #8a8a8a; }
+  .a .nav ul li:first-child { color: #fff; }
+  .a .icons { display: flex; gap: 16px; color: #8a8a8a; font-size: 12px; font-weight: 700; letter-spacing: .1em; }
+  .a .icons b { color: #ccff00; }
+
+  .a .hero { position: relative; padding: 76px 34px 66px; background: linear-gradient(115deg, #0a0a0a 0%, #141414 52%, #0a0a0a 100%); overflow: hidden; }
+  .a .hero::before {
+    content: ""; position: absolute; right: -80px; top: -60px; width: 460px; height: 460px;
+    background: #ccff00; opacity: .09; filter: blur(70px); border-radius: 50%;
+  }
+  .a .hero h1 {
+    font-family: Impact, "Arial Black", sans-serif; font-size: 96px; line-height: .86;
+    letter-spacing: -.02em; text-transform: uppercase; position: relative;
+  }
+  .a .hero h1 .out { -webkit-text-stroke: 2px #ccff00; color: transparent; }
+  .a .hero .kick { font-size: 11px; font-weight: 800; letter-spacing: .3em; color: #ccff00; margin-bottom: 20px; }
+  .a .hero p { color: #9a9a9a; font-size: 14px; max-width: 400px; margin: 24px 0 30px; line-height: 1.6; position: relative; }
+  .a .btn { display: inline-block; background: #ccff00; color: #0a0a0a; font-weight: 800; font-size: 12px; letter-spacing: .16em; padding: 16px 34px; position: relative; }
+  .a .btn + .btn { background: transparent; color: #fff; border: 1px solid #333; margin-left: 10px; }
+
+  .a .cats { display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid #1f1f1f; }
+  .a .cats div { padding: 26px 12px; text-align: center; font-size: 12px; font-weight: 800; letter-spacing: .14em; border-right: 1px solid #1f1f1f; color: #8a8a8a; }
+  .a .cats div:last-child { border-right: 0; }
+  .a .cats div:nth-child(2) { color: #ccff00; }
+
+  .a .sec { padding: 56px 34px; }
+  .a .sechead { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 28px; }
+  .a .sechead h2 { font-family: Impact, "Arial Black", sans-serif; font-size: 40px; text-transform: uppercase; letter-spacing: -.01em; }
+  .a .sechead a { color: #ccff00; font-size: 11px; font-weight: 800; letter-spacing: .16em; }
+  .a .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .a .card .ph { aspect-ratio: 3/4; position: relative; overflow: hidden; }
+  .a .card .ph i { position: absolute; top: 12px; left: 12px; background: #ccff00; color: #0a0a0a; font-size: 10px; font-weight: 800; letter-spacing: .1em; padding: 4px 9px; font-style: normal; }
+  .a .card h3 { font-size: 13px; font-weight: 700; margin: 14px 0 5px; letter-spacing: .02em; }
+  .a .card .pr { font-family: Impact, "Arial Black", sans-serif; font-size: 20px; color: #ccff00; letter-spacing: .01em; }
+
+  .a .trust { display: grid; grid-template-columns: repeat(4, 1fr); background: #ccff00; color: #0a0a0a; }
+  .a .trust div { padding: 22px 14px; text-align: center; font-size: 11px; font-weight: 800; letter-spacing: .12em; }
+  .a .foot { padding: 46px 34px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 30px; border-top: 1px solid #1f1f1f; }
+  .a .foot h4 { font-size: 11px; letter-spacing: .18em; color: #ccff00; margin-bottom: 14px; font-weight: 800; }
+  .a .foot p, .a .foot li { color: #6a6a6a; font-size: 12px; line-height: 2; list-style: none; }
+
+  /* ================================================================
+     YÖN B — MİNİMAL LÜKS
+     ================================================================ */
+  .b { background: #faf8f5; color: #1c1a17; font-family: "Helvetica Neue", Arial, sans-serif; }
+  .b .topbar { background: #1c1a17; color: #d8d2c8; text-align: center; font-size: 10px; letter-spacing: .26em; padding: 11px; text-transform: uppercase; }
+  .b .nav { display: flex; align-items: center; justify-content: space-between; padding: 32px 46px 24px; }
+  .b .nav ul { display: flex; gap: 34px; list-style: none; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #6b665e; }
+  .b .logo { font-family: Didot, "Bodoni 72", "Times New Roman", serif; font-size: 30px; letter-spacing: .3em; font-weight: 400; }
+  .b .icons { display: flex; gap: 20px; font-size: 11px; letter-spacing: .14em; color: #6b665e; text-transform: uppercase; }
+
+  .b .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 0; align-items: center; padding: 40px 46px 76px; }
+  .b .hero .txt { padding-right: 54px; }
+  .b .hero .kick { font-size: 10px; letter-spacing: .32em; color: #a09889; text-transform: uppercase; margin-bottom: 26px; }
+  .b .hero h1 { font-family: Didot, "Bodoni 72", "Times New Roman", serif; font-size: 62px; line-height: 1.08; font-weight: 400; letter-spacing: -.005em; }
+  .b .hero h1 em { font-style: italic; color: #8a8172; }
+  .b .hero p { color: #6b665e; font-size: 14px; line-height: 1.85; margin: 26px 0 34px; max-width: 340px; }
+  .b .btn { display: inline-block; border-bottom: 1px solid #1c1a17; padding-bottom: 7px; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; }
+  .b .hero .ph { aspect-ratio: 4/5; }
+
+  .b .cats { display: flex; justify-content: center; gap: 52px; padding: 0 46px 62px; }
+  .b .cats div { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #6b665e; }
+  .b .cats div:nth-child(3) { color: #1c1a17; border-bottom: 1px solid #1c1a17; padding-bottom: 5px; }
+
+  .b .sec { padding: 0 46px 72px; }
+  .b .sechead { text-align: center; margin-bottom: 42px; }
+  .b .sechead h2 { font-family: Didot, "Bodoni 72", serif; font-size: 34px; font-weight: 400; letter-spacing: .02em; }
+  .b .sechead p { color: #a09889; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; margin-top: 12px; }
+  .b .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 26px; }
+  .b .card .ph { aspect-ratio: 3/4; }
+  .b .card h3 { font-size: 13px; font-weight: 400; margin: 18px 0 7px; letter-spacing: .04em; }
+  .b .card .pr { font-size: 13px; color: #6b665e; letter-spacing: .06em; }
+
+  .b .trust { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid #e5e0d7; border-bottom: 1px solid #e5e0d7; }
+  .b .trust div { padding: 34px 16px; text-align: center; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: #6b665e; border-right: 1px solid #e5e0d7; }
+  .b .trust div:last-child { border: 0; }
+  .b .foot { padding: 56px 46px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 34px; }
+  .b .foot h4 { font-size: 10px; letter-spacing: .2em; text-transform: uppercase; margin-bottom: 18px; color: #1c1a17; }
+  .b .foot p, .b .foot li { color: #8a8172; font-size: 12px; line-height: 2.1; list-style: none; }
+
+  /* ================================================================
+     YÖN C — MODERN TEKNOLOJİ
+     ================================================================ */
+  .c { background: #0b0b14; color: #f4f4f8; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; position: relative; overflow: hidden; }
+  .c::before {
+    content: ""; position: absolute; top: -160px; left: 8%; width: 560px; height: 560px;
+    background: radial-gradient(circle, #6d5cff 0%, transparent 68%); opacity: .35; filter: blur(50px);
+  }
+  .c::after {
+    content: ""; position: absolute; top: 140px; right: -100px; width: 480px; height: 480px;
+    background: radial-gradient(circle, #00d9c0 0%, transparent 68%); opacity: .22; filter: blur(60px);
+  }
+  .c > * { position: relative; }
+  .c .topbar { text-align: center; font-size: 11px; letter-spacing: .14em; padding: 10px; color: #a5a3c4; border-bottom: 1px solid rgba(255,255,255,.07); }
+  .c .nav {
+    display: flex; align-items: center; justify-content: space-between;
+    margin: 16px 26px; padding: 14px 24px; border-radius: 18px;
+    background: rgba(255,255,255,.055); border: 1px solid rgba(255,255,255,.1); backdrop-filter: blur(24px);
+  }
+  .c .logo { font-size: 21px; font-weight: 700; letter-spacing: -.02em; }
+  .c .logo em { font-style: normal; background: linear-gradient(96deg, #8b7cff, #00d9c0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .c .nav ul { display: flex; gap: 26px; list-style: none; font-size: 13px; color: #a5a3c4; font-weight: 500; }
+  .c .nav ul li:first-child { color: #fff; }
+  .c .icons { display: flex; gap: 14px; align-items: center; font-size: 13px; color: #a5a3c4; }
+  .c .icons .cta { background: linear-gradient(96deg, #6d5cff, #00d9c0); color: #06060c; font-weight: 700; padding: 9px 18px; border-radius: 999px; font-size: 12px; }
+
+  .c .hero { text-align: center; padding: 74px 30px 66px; }
+  .c .pill { display: inline-block; font-size: 11px; letter-spacing: .1em; color: #c4c0ff; background: rgba(109,92,255,.16); border: 1px solid rgba(139,124,255,.32); border-radius: 999px; padding: 7px 17px; margin-bottom: 26px; }
+  .c .hero h1 { font-size: 66px; line-height: 1.04; font-weight: 700; letter-spacing: -.035em; }
+  .c .hero h1 em { font-style: normal; background: linear-gradient(96deg, #8b7cff 20%, #00d9c0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .c .hero p { color: #a5a3c4; font-size: 16px; line-height: 1.7; max-width: 480px; margin: 24px auto 34px; }
+  .c .btn { display: inline-block; background: linear-gradient(96deg, #6d5cff, #00d9c0); color: #06060c; font-weight: 700; font-size: 14px; padding: 15px 34px; border-radius: 999px; }
+  .c .btn + .btn { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); color: #f4f4f8; margin-left: 12px; }
+
+  .c .cats { display: flex; justify-content: center; gap: 11px; padding: 0 30px 62px; flex-wrap: wrap; }
+  .c .cats div { font-size: 13px; padding: 10px 20px; border-radius: 999px; background: rgba(255,255,255,.055); border: 1px solid rgba(255,255,255,.1); color: #a5a3c4; }
+  .c .cats div:nth-child(2) { background: rgba(109,92,255,.22); border-color: rgba(139,124,255,.42); color: #fff; }
+
+  .c .sec { padding: 0 30px 66px; }
+  .c .sechead { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 26px; }
+  .c .sechead h2 { font-size: 32px; font-weight: 700; letter-spacing: -.025em; }
+  .c .sechead a { color: #8b7cff; font-size: 13px; font-weight: 600; }
+  .c .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .c .card { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.09); border-radius: 20px; padding: 12px; backdrop-filter: blur(20px); }
+  .c .card .ph { aspect-ratio: 1/1; border-radius: 13px; position: relative; overflow: hidden; }
+  .c .card .ph i { position: absolute; top: 10px; left: 10px; background: rgba(6,6,12,.62); backdrop-filter: blur(10px); color: #00d9c0; font-size: 10px; font-weight: 700; padding: 5px 10px; border-radius: 999px; font-style: normal; }
+  .c .card h3 { font-size: 14px; font-weight: 600; margin: 14px 4px 6px; }
+  .c .card .pr { font-size: 15px; font-weight: 700; margin: 0 4px 6px; background: linear-gradient(96deg, #8b7cff, #00d9c0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  .c .trust { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; padding: 0 30px 62px; }
+  .c .trust div { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.09); border-radius: 16px; padding: 22px 16px; text-align: center; font-size: 12px; color: #a5a3c4; }
+  .c .trust div b { display: block; color: #fff; font-size: 13px; margin-bottom: 5px; }
+  .c .foot { padding: 46px 30px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 30px; border-top: 1px solid rgba(255,255,255,.08); }
+  .c .foot h4 { font-size: 13px; margin-bottom: 15px; font-weight: 600; }
+  .c .foot p, .c .foot li { color: #7d7ba0; font-size: 13px; line-height: 2; list-style: none; }
+
+  /* ---------- ORTAK GÖRSEL YER TUTUCULAR ---------- */
+  .ph { background: #222; }
+  .ph.p1 { background: linear-gradient(150deg, #3a3a44 0%, #55555f 48%, #2c2c34 100%); }
+  .ph.p2 { background: linear-gradient(150deg, #4a3f52 0%, #6a5a72 48%, #332c3a 100%); }
+  .ph.p3 { background: linear-gradient(150deg, #33424a 0%, #4d616b 48%, #26313a 100%); }
+  .ph.p4 { background: linear-gradient(150deg, #4a4238 0%, #6b5f50 48%, #332e28 100%); }
+  .b .ph.p1 { background: linear-gradient(150deg, #e8e2d8 0%, #d6cec1 50%, #c9c0b1 100%); }
+  .b .ph.p2 { background: linear-gradient(150deg, #e4ddd6 0%, #cfc5bb 50%, #bdb2a6 100%); }
+  .b .ph.p3 { background: linear-gradient(150deg, #ded9d2 0%, #c8c1b7 50%, #b5ada1 100%); }
+  .b .ph.p4 { background: linear-gradient(150deg, #eae5dc 0%, #d3cbc0 50%, #c0b6a9 100%); }
+</style>
+
+<div class="switcher">
+  <span class="lbl">Nova Wear · Yön</span>
+  <button data-go="a" data-on="1">A — Streetwear / Cesur</button>
+  <button data-go="b">B — Minimal Lüks</button>
+  <button data-go="c">C — Modern Teknoloji</button>
+</div>
+
+<div class="note" id="note"></div>
+
+<div class="stage">
+
+  <!-- ============ A ============ -->
+  <div class="frame a" data-id="a" data-on="1">
+    <div class="topbar"><div class="ticker">
+      <span>★ 1500 TL ÜZERİ KARGO BEDAVA</span><span>★ YENİ SEZON DÜŞTÜ</span><span>★ 30 GÜN İADE</span><span>★ 1500 TL ÜZERİ KARGO BEDAVA</span><span>★ YENİ SEZON DÜŞTÜ</span><span>★ 30 GÜN İADE</span>
+    </div></div>
+    <div class="nav">
+      <div class="logo">NOVA<em>WEAR</em></div>
+      <ul><li>YENİ</li><li>KADIN</li><li>ERKEK</li><li>OUTLET</li></ul>
+      <div class="icons"><span>ARA</span><span>HESAP</span><span>SEPET <b>(2)</b></span></div>
+    </div>
+    <div class="hero">
+      <div class="kick">SEZON 01 / 2026</div>
+      <h1>SOKAK<br><span class="out">SENİN</span><br>PİSTİN</h1>
+      <p>Kalabalıkta kaybolmak için tasarlanmadı. Yeni koleksiyon, sınırlı sayıda üretim.</p>
+      <a class="btn">KOLEKSİYONU GÖR</a><a class="btn">LOOKBOOK</a>
+    </div>
+    <div class="cats"><div>OVERSIZE</div><div>YENİ SEZON</div><div>DENIM</div><div>CEKET</div><div>AKSESUAR</div></div>
+    <div class="sec">
+      <div class="sechead"><h2>YENİ DÜŞENLER</h2><a>HEPSİNİ GÖR →</a></div>
+      <div class="grid">
+        <div class="card"><div class="ph p1"><i>YENİ</i></div><h3>Oversize Kapüşonlu</h3><div class="pr">1.290 TL</div></div>
+        <div class="card"><div class="ph p2"></div><h3>Kargo Pantolon</h3><div class="pr">1.650 TL</div></div>
+        <div class="card"><div class="ph p3"><i>SON 3</i></div><h3>Yıkamalı Denim Ceket</h3><div class="pr">2.450 TL</div></div>
+        <div class="card"><div class="ph p4"></div><h3>Grafik Baskılı Tişört</h3><div class="pr">690 TL</div></div>
+      </div>
+    </div>
+    <div class="trust"><div>AYNI GÜN KARGO</div><div>GÜVENLİ ÖDEME</div><div>30 GÜN İADE</div><div>ORİJİNAL ÜRÜN</div></div>
+    <div class="foot">
+      <div><div class="logo" style="font-size:21px;margin-bottom:12px">NOVA<em>WEAR</em></div><p>Sınırlı üretim streetwear.<br>İstanbul.</p></div>
+      <div><h4>ALIŞVERİŞ</h4><ul><li>Yeni Sezon</li><li>Kadın</li><li>Erkek</li></ul></div>
+      <div><h4>YARDIM</h4><ul><li>Kargo Takip</li><li>İade & Değişim</li><li>S.S.S.</li></ul></div>
+      <div><h4>KURUMSAL</h4><ul><li>KVKK</li><li>Gizlilik</li><li>Mesafeli Satış</li></ul></div>
+    </div>
+  </div>
+
+  <!-- ============ B ============ -->
+  <div class="frame b" data-id="b">
+    <div class="topbar">Tüm siparişlerde ücretsiz kargo ve iade</div>
+    <div class="nav">
+      <ul><li>Yeni</li><li>Koleksiyon</li><li>Atölye</li></ul>
+      <div class="logo">NOVA</div>
+      <div class="icons"><span>Ara</span><span>Hesap</span><span>Sepet (2)</span></div>
+    </div>
+    <div class="hero">
+      <div class="txt">
+        <div class="kick">Sonbahar Kış 2026</div>
+        <h1>Sadeliğin<br><em>en zarif</em><br>hâli.</h1>
+        <p>Az sayıda, doğru parça. Zamansız kesimler ve doğal kumaşlarla hazırlanan yeni koleksiyon.</p>
+        <a class="btn">Koleksiyonu Keşfet</a>
+      </div>
+      <div class="ph p1"></div>
+    </div>
+    <div class="cats"><div>Trençkot</div><div>Triko</div><div>Elbise</div><div>Pantolon</div><div>Aksesuar</div></div>
+    <div class="sec">
+      <div class="sechead"><h2>Yeni Gelenler</h2><p>Sınırlı Sayıda</p></div>
+      <div class="grid">
+        <div class="card"><div class="ph p1"></div><h3>Yün Karışımlı Trençkot</h3><div class="pr">4.850 TL</div></div>
+        <div class="card"><div class="ph p2"></div><h3>Kaşmir Triko Kazak</h3><div class="pr">2.950 TL</div></div>
+        <div class="card"><div class="ph p3"></div><h3>Saten Midi Elbise</h3><div class="pr">3.200 TL</div></div>
+        <div class="card"><div class="ph p4"></div><h3>Keten Geniş Pantolon</h3><div class="pr">1.890 TL</div></div>
+      </div>
+    </div>
+    <div class="trust"><div>Ücretsiz Kargo</div><div>Güvenli Ödeme</div><div>30 Gün İade</div><div>Özenli Paketleme</div></div>
+    <div class="foot">
+      <div><div class="logo" style="font-size:22px;margin-bottom:14px">NOVA</div><p>Zamansız parçalar,<br>özenli üretim.</p></div>
+      <div><h4>Alışveriş</h4><ul><li>Yeni Sezon</li><li>Koleksiyon</li><li>Outlet</li></ul></div>
+      <div><h4>Yardım</h4><ul><li>Kargo Takip</li><li>İade & Değişim</li><li>S.S.S.</li></ul></div>
+      <div><h4>Kurumsal</h4><ul><li>KVKK</li><li>Gizlilik</li><li>Mesafeli Satış</li></ul></div>
+    </div>
+  </div>
+
+  <!-- ============ C ============ -->
+  <div class="frame c" data-id="c">
+    <div class="topbar">✦ Yeni sezon yayında — 1500 TL üzeri kargo bedava</div>
+    <div class="nav">
+      <div class="logo">nova<em>wear</em></div>
+      <ul><li>Yeni</li><li>Kadın</li><li>Erkek</li><li>Koleksiyon</li></ul>
+      <div class="icons"><span>Ara</span><span>Hesap</span><span class="cta">Sepet · 2</span></div>
+    </div>
+    <div class="hero">
+      <div class="pill">✦ Sonbahar Kış 2026 koleksiyonu yayında</div>
+      <h1>Geleceğin<br><em>gardırobu</em></h1>
+      <p>Teknik kumaşlar, akıllı kesimler. Günlük hayata uyum sağlayan, sezon aşırı parçalar.</p>
+      <a class="btn">Keşfetmeye Başla</a><a class="btn">Koleksiyon</a>
+    </div>
+    <div class="cats"><div>Tümü</div><div>Yeni Sezon</div><div>Dış Giyim</div><div>Triko</div><div>Denim</div><div>Aksesuar</div></div>
+    <div class="sec">
+      <div class="sechead"><h2>Öne çıkanlar</h2><a>Tümünü gör →</a></div>
+      <div class="grid">
+        <div class="card"><div class="ph p1"><i>YENİ</i></div><h3>Teknik Şişme Mont</h3><div class="pr">3.450 TL</div></div>
+        <div class="card"><div class="ph p2"></div><h3>Merino Triko</h3><div class="pr">1.980 TL</div></div>
+        <div class="card"><div class="ph p3"><i>SON 3</i></div><h3>Su İtici Parka</h3><div class="pr">4.100 TL</div></div>
+        <div class="card"><div class="ph p4"></div><h3>Streç Denim</h3><div class="pr">1.550 TL</div></div>
+      </div>
+    </div>
+    <div class="trust">
+      <div><b>Aynı Gün Kargo</b>15:00'e kadar</div>
+      <div><b>Güvenli Ödeme</b>3D Secure</div>
+      <div><b>30 Gün İade</b>Koşulsuz</div>
+      <div><b>Kolay Takip</b>Anlık bildirim</div>
+    </div>
+    <div class="foot">
+      <div><div class="logo" style="margin-bottom:12px">nova<em>wear</em></div><p>Teknik kumaş, modern kesim.<br>İstanbul.</p></div>
+      <div><h4>Alışveriş</h4><ul><li>Yeni Sezon</li><li>Kadın</li><li>Erkek</li></ul></div>
+      <div><h4>Yardım</h4><ul><li>Kargo Takip</li><li>İade & Değişim</li><li>S.S.S.</li></ul></div>
+      <div><h4>Kurumsal</h4><ul><li>KVKK</li><li>Gizlilik</li><li>Mesafeli Satış</li></ul></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  var notes = {
+    a: '<span class="tag">Yön A</span><b>Streetwear / Cesur.</b> Neredeyse siyah zemin, asit yeşili tek vurgu rengi, Impact benzeri iri sıkışık başlıklar, sıfır köşe yuvarlaklığı, kayan duyuru şeridi. Genç ve iddialı; ürün fotoğrafları güçlü olmak zorunda çünkü tasarım onları öne itiyor. Lavia\'nın yumuşak mor paletinin tam zıddı.',
+    b: '<span class="tag">Yön B</span><b>Minimal Lüks.</b> Sıcak kırık beyaz, Didot serif başlıklar, bol boşluk, geniş harf aralıklı küçük etiketler, neredeyse hiç çizgi ve gölge yok. Fiyatı yüksek gösterir ve güven verir. Boşluk çok olduğu için az ürünle bile dolu görünür — yeni markalar için avantaj.',
+    c: '<span class="tag">Yön C</span><b>Modern Teknoloji.</b> Koyu lacivert zemin, mor→turkuaz gradyanlar, cam efektli (blur) kartlar ve navigasyon, yuvarlak köşeler. "Wear" ismine teknolojik bir çağrışım katıyor. Üçü içinde en çok hareket/animasyon barındıran yön, mobilde performansa dikkat etmek gerekir.'
+  };
+  var btns = document.querySelectorAll('.switcher button');
+  var frames = document.querySelectorAll('.frame');
+  var note = document.getElementById('note');
+  function go(id) {
+    btns.forEach(function (b) { b.setAttribute('data-on', b.dataset.go === id ? '1' : '0'); });
+    frames.forEach(function (f) { f.setAttribute('data-on', f.dataset.id === id ? '1' : '0'); });
+    note.innerHTML = notes[id];
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  btns.forEach(function (b) { b.addEventListener('click', function () { go(b.dataset.go); }); });
+  note.innerHTML = notes.a;
+</script>

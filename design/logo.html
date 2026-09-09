@@ -1,0 +1,202 @@
+<meta charset="utf-8">
+<title>Nova Wear — Logo Yönleri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Manrope:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg:#131316; --elev:#1A1A20; --surface:#202027;
+    --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.17);
+    --text:#F4F4F7; --dim:#A2A2AE; --faint:#6E6E7B;
+    --accent:#9B70FF; --accent-soft:rgba(155,112,255,.16); --on-accent:#150A26;
+    --display:'Syne',sans-serif; --body:'Manrope',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:var(--body)}
+
+  .top{position:sticky;top:0;z-index:50;background:rgba(19,19,22,.94);
+       backdrop-filter:blur(20px);border-bottom:1px solid var(--line);padding:16px 26px}
+  .top h1{font-family:var(--display);font-size:16px;font-weight:700;letter-spacing:-.02em}
+  .top p{color:var(--faint);font-size:12.5px;margin-top:4px}
+
+  .wrap{max-width:1240px;margin:0 auto;padding:26px 26px 90px}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+
+  .opt{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--elev)}
+  .opt h2{font-family:var(--body);font-size:13px;font-weight:600;padding:14px 16px 4px}
+  .opt .desc{color:var(--faint);font-size:11.5px;padding:0 16px 14px;line-height:1.5;min-height:52px}
+
+  /* Hero'daki görsel alanının birebir ölçüsü */
+  .slot{
+    aspect-ratio:4/5;margin:0 16px 16px;border-radius:14px;border:1px solid var(--line);
+    background:
+      radial-gradient(420px 240px at 72% 16%, var(--accent-soft), transparent 62%),
+      linear-gradient(160deg,#22222A 0%,#17171C 100%);
+    display:flex;align-items:center;justify-content:center;padding:26px;overflow:hidden;
+  }
+  /* Küçük boy denetimi: navbar'daki hâli */
+  .mini{border-top:1px solid var(--line);padding:12px 16px;display:flex;align-items:center;
+        gap:10px;background:var(--surface)}
+  .mini .lbl{font-size:10px;color:var(--faint);letter-spacing:.1em;text-transform:uppercase}
+
+  /* ============================ 1 — MONOLİT ============================
+     Syne'de "WEAR" (541 birim) "NOVA"dan (476) %14 daha geniş. İki satırın
+     kenarları hizalansın diye ikinci satır 0.878 oranında küçültülüyor —
+     istifli logoların standart çözümü. Harf aralığıyla kapatmak harfleri
+     birbirine geçirirdi. */
+  .monolith{font-family:var(--display);font-weight:800;line-height:.82;
+            letter-spacing:-.045em;text-align:left;font-size:clamp(36px,7.8vw,64px)}
+  .monolith .w{display:block;font-size:.878em;color:transparent;
+               -webkit-text-stroke:1.5px var(--accent)}
+
+  /* ============================ 2 — HALKA ============================== */
+  .ring{font-family:var(--display);font-weight:700;font-size:clamp(28px,5.6vw,46px);
+        letter-spacing:.02em;display:flex;flex-direction:column;align-items:center;gap:10px}
+  .ring .top-row{display:flex;align-items:center;gap:.06em}
+  /* Halka çapı, fontun cap yüksekliğine (0.66em) eşitlendi ki diğer
+     harflerle aynı hizada dursun. */
+  .ring .o{
+    width:.66em;height:.66em;border-radius:50%;border:.085em solid var(--accent);
+    display:inline-block;margin:0 .07em;flex-shrink:0;
+  }
+  .ring .sub{font-family:var(--body);font-size:.26em;font-weight:500;
+             letter-spacing:.62em;color:var(--dim);padding-left:.62em}
+
+  /* ============================ 3 — HAT ================================ */
+  .hair{text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px}
+  .hair .rule{width:76px;height:1px;background:var(--accent)}
+  .hair .name{font-family:var(--display);font-weight:500;
+              font-size:clamp(16px,2.9vw,23px);letter-spacing:.44em;padding-left:.44em}
+  .hair .est{font-family:var(--body);font-size:9.5px;letter-spacing:.36em;
+             color:var(--faint);padding-left:.36em}
+
+  /* ============================ 4 — KESİT ============================== */
+  .cut{font-family:var(--display);font-weight:800;line-height:.88;letter-spacing:-.04em;
+       font-size:clamp(34px,7vw,58px);text-align:center;display:flex;
+       flex-direction:column;align-items:center}
+  .cut .bar{height:2px;background:var(--accent);margin:.16em 0;width:100%}
+  .cut .b{color:var(--accent);font-size:.878em}
+
+  /* ============================ 5 — KAYIK ============================= */
+  .shift{font-family:var(--display);font-weight:800;line-height:.86;letter-spacing:-.05em;
+         font-size:clamp(36px,7.4vw,60px);text-transform:lowercase}
+  .shift .two{display:block;padding-left:.9em;color:var(--accent)}
+
+  /* ============================ 6 — DİKEY ============================= */
+  .vert{display:flex;align-items:center;gap:14px}
+  /* Dar kutuda taşıyordu: üst sınır düşürüldü ve kutu genişliğine göre
+     ölçekleniyor (8vw yerine kapsayıcıya oranlı cqw kullanılamadığı için
+     daha güvenli bir clamp). */
+  .vert{max-width:100%}
+  .vert .big{font-family:var(--display);font-weight:800;font-size:clamp(30px,5vw,46px);
+             letter-spacing:-.05em;line-height:.85}
+  .vert .side{writing-mode:vertical-rl;font-family:var(--body);font-size:11px;
+              font-weight:600;letter-spacing:.5em;color:var(--accent);
+              border-left:1px solid var(--line2);padding-left:14px;height:fit-content}
+
+  /* --- navbar boyu önizleme (her yön için sadeleştirilmiş hâl) --- */
+  .nav-mono{font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:-.04em}
+  .nav-mono .w{color:var(--accent)}
+  .nav-ring{font-family:var(--display);font-weight:700;font-size:18px;display:flex;align-items:center;gap:1px}
+  .nav-ring .o{width:.6em;height:.6em;border-radius:50%;border:.1em solid var(--accent);display:inline-block}
+  .nav-hair{font-family:var(--display);font-weight:500;font-size:13px;letter-spacing:.34em;padding-left:.34em}
+  .nav-cut{font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:-.04em}
+  .nav-cut .b{color:var(--accent)}
+  .nav-shift{font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:-.05em;text-transform:lowercase}
+  .nav-shift em{font-style:normal;color:var(--accent)}
+  .nav-vert{font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:-.04em}
+  .nav-vert b{color:var(--accent);font-weight:800}
+</style>
+
+<div class="top">
+  <h1>Nova Wear — logo yönleri</h1>
+  <p>Altı yazı-logo denemesi. Büyük kutu hero'daki görsel alanının birebir ölçüsü (4:5); altındaki şerit navbar boyutundaki hâli.</p>
+</div>
+
+<div class="wrap">
+  <div class="grid">
+
+    <!-- 1 -->
+    <section class="opt">
+      <h2>1 — Monolit</h2>
+      <div class="desc">İki satır, ağır ve sıkışık, kenarları tam hizalı. "WEAR" konturlu. En iddialı, moda markası havasında.</div>
+      <div class="slot">
+        <div class="monolith">NOVA<br><span class="w">WEAR</span></div>
+      </div>
+      <div class="mini"><span class="lbl">navbar</span>
+        <span class="nav-mono">NOVA<span class="w">WEAR</span></span></div>
+    </section>
+
+    <!-- 2 -->
+    <section class="opt">
+      <h2>2 — Halka</h2>
+      <div class="desc">"O" harfi tam daire halkaya dönüşüyor — nova (yeni yıldız) çağrışımı. Zarif ve akılda kalıcı.</div>
+      <div class="slot">
+        <div class="ring">
+          <div class="top-row">N<span class="o"></span>VA</div>
+          <div class="sub">WEAR</div>
+        </div>
+      </div>
+      <div class="mini"><span class="lbl">navbar</span>
+        <span class="nav-ring">N<span class="o"></span>VA<span style="opacity:.55;font-weight:500;letter-spacing:.2em;font-size:.62em;padding-left:.5em">WEAR</span></span></div>
+    </section>
+
+    <!-- 3 -->
+    <section class="opt">
+      <h2>3 — Hat</h2>
+      <div class="desc">İnce ve çok geniş harf aralıklı, üstte-altta hat. Sessiz lüks dili; pahalı ve sakin durur.</div>
+      <div class="slot">
+        <div class="hair">
+          <div class="rule"></div>
+          <div class="name">NOVA WEAR</div>
+          <div class="est">EST. 2026</div>
+          <div class="rule"></div>
+        </div>
+      </div>
+      <div class="mini"><span class="lbl">navbar</span>
+        <span class="nav-hair">NOVA WEAR</span></div>
+    </section>
+
+    <!-- 4 -->
+    <section class="opt">
+      <h2>4 — Kesit</h2>
+      <div class="desc">İki kelimeyi vurgu renginde bir çizgi ayırıyor. Grafik, net, editoryal bir blok.</div>
+      <div class="slot">
+        <div class="cut">
+          NOVA
+          <div class="bar"></div>
+          <span class="b">WEAR</span>
+        </div>
+      </div>
+      <div class="mini"><span class="lbl">navbar</span>
+        <span class="nav-cut">NOVA<span class="b">/</span><span class="b">WEAR</span></span></div>
+    </section>
+
+    <!-- 5 -->
+    <section class="opt">
+      <h2>5 — Kayık</h2>
+      <div class="desc">Küçük harf, ikinci satır içeri kaymış ve vurgu renginde. Genç ve rahat; sokak tarzına en yakın.</div>
+      <div class="slot">
+        <div class="shift">nova<span class="two">wear</span></div>
+      </div>
+      <div class="mini"><span class="lbl">navbar</span>
+        <span class="nav-shift">nova<em>wear</em></span></div>
+    </section>
+
+    <!-- 6 -->
+    <section class="opt">
+      <h2>6 — Dikey</h2>
+      <div class="desc">"NOVA" büyük, "WEAR" yanında dikey ve ayraçlı. Mimari bir denge, dikey alanı iyi dolduruyor.</div>
+      <div class="slot">
+        <div class="vert">
+          <div class="big">NOVA</div>
+          <div class="side">WEAR</div>
+        </div>
+      </div>
+      <div class="mini"><span class="lbl">navbar</span>
+        <span class="nav-vert">NOVA<b>·</b>WEAR</span></div>
+    </section>
+
+  </div>
+</div>

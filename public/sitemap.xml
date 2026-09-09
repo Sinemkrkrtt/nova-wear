@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TODO(alan adı): Aşağıdaki ALAN-ADINIZ ifadesini gerçek adresle değiştirin.
+  Bu dosya daha önce Lavia Butik'in adreslerini listeliyordu; Nova Wear'ın
+  rotalarıyla yeniden yazıldı.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://ALAN-ADINIZ/</loc><priority>1.0</priority></url>
+  <url><loc>https://ALAN-ADINIZ/yeni-gelenler</loc><priority>0.9</priority></url>
+  <url><loc>https://ALAN-ADINIZ/cok-satanlar</loc><priority>0.9</priority></url>
+  <url><loc>https://ALAN-ADINIZ/sikca-sorulan-sorular</loc><priority>0.5</priority></url>
+  <url><loc>https://ALAN-ADINIZ/kargo-takip</loc><priority>0.5</priority></url>
+  <url><loc>https://ALAN-ADINIZ/iade-degisim</loc><priority>0.4</priority></url>
+  <url><loc>https://ALAN-ADINIZ/mesafeli-satis-sozlesmesi</loc><priority>0.3</priority></url>
+  <url><loc>https://ALAN-ADINIZ/on-bilgilendirme-formu</loc><priority>0.3</priority></url>
+  <url><loc>https://ALAN-ADINIZ/kvkk</loc><priority>0.3</priority></url>
+  <url><loc>https://ALAN-ADINIZ/gizlilik-politikasi</loc><priority>0.3</priority></url>
+</urlset>

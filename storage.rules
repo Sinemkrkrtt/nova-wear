@@ -1,0 +1,14 @@
+rules_version = '2';
+
+// Nova Wear, Firebase Storage KULLANMAZ. Ürün, banner ve hero görselleri
+// Cloudinary'de barındırılır (bkz. src/utils/storage.js).
+//
+// Bu dosya yalnızca ileride Storage açılırsa bucket'ın varsayılan olarak
+// kilitli kalmasını sağlar: hiçbir istemci okuma/yazma yapamaz.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

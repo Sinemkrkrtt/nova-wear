@@ -1,0 +1,93 @@
+/* ===========================================================================
+   NOVA WEAR — TASARIM BELİRTEÇLERİ (DESIGN TOKENS)
+   ===========================================================================
+   Sitenin TÜM renkleri, fontları, köşe yarıçapları ve gölgeleri burada tanımlı.
+   Bileşenlerin içine tek tek renk kodu yazmak yerine buradaki değişkenler
+   kullanılır. Böylece "vurgu rengini değiştirelim" gibi bir istek, 25 dosyada
+   arama yapmak yerine aşağıdaki tek satırı değiştirmekle çözülür.
+
+   MUI (sx) tarafında aynı değerler src/theme/muiTheme.js dosyasından okunur —
+   iki dosya bilerek aynı paleti paylaşır.
+   =========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Manrope:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* --- ZEMİN --- */
+  /* Saf siyah (#000) yerine ısıtılmış kömür grisi: ekranda daha yumuşak durur,
+     kontrast keskinliğini azaltır ama karanlık karakteri korur. */
+  --nw-bg:           #131316;
+  --nw-bg-elev:      #1A1A20;   /* hafif yükseltilmiş yüzey (kart arkası) */
+  --nw-surface:      #202027;   /* kart, giriş alanı, açılır menü */
+  --nw-surface-2:    #2A2A33;   /* hover / seçili durum */
+
+  /* --- ÇİZGİLER --- */
+  --nw-line:         rgba(255, 255, 255, 0.09);
+  --nw-line-strong:  rgba(255, 255, 255, 0.17);
+
+  /* --- METİN --- */
+  --nw-text:         #F4F4F7;
+  --nw-text-dim:     #A2A2AE;   /* açıklama, alt başlık */
+  --nw-text-faint:   #6E6E7B;   /* etiket, ipucu */
+
+  /* --- VURGU RENGİ ---
+     Tek satır: markanın karakterini bu belirliyor. Değiştirmek istersen
+     yalnızca --nw-accent ve --nw-accent-hover satırlarını güncellemen yeterli. */
+  --nw-accent:       #9B70FF;   /* elektrik moru */
+  --nw-accent-hover: #B18FFF;
+  --nw-accent-soft:  rgba(155, 112, 255, 0.16);
+  --nw-on-accent:    #150A26;   /* vurgu rengi ÜZERİNE gelen metin */
+
+  /* --- DURUM RENKLERİ ---
+     Yumuşak (-soft) tonlar bildirim/rozet zeminleri içindir: koyu temada düz
+     renk zemin çok parlak kaldığı için saydam katman kullanılıyor. */
+  --nw-success:      #3DD68C;
+  --nw-danger:       #FF5F5F;
+  --nw-warning:      #FFB450;
+  --nw-success-soft: rgba(61, 214, 140, 0.13);
+  --nw-danger-soft:  rgba(255, 95, 95, 0.13);
+  --nw-warning-soft: rgba(255, 180, 80, 0.13);
+
+  /* --- TİPOGRAFİ ---
+     Display: Syne — moda ve sanat dünyasında sevilen, geniş ve alışılmadık
+     harf biçimleriyle markaya kimlik veren bir font.
+     Body: Manrope — yumuşak geometrik grotesk; Syne'in karakterini
+     bastırmadan uzun metinde ve küçük puntoda okunaklı kalıyor.
+
+     NOT: Syne'de ₺ simgesi YOK. Yazı tipi listesinde hemen ardından Manrope
+     geldiği için tarayıcı yalnızca o simgeyi Manrope'tan alır — fiyatlarda
+     kırık karakter görünmez. Bu yüzden sıra bilerek böyle. */
+  --nw-font-display: 'Syne', 'Manrope', 'Helvetica Neue', Arial, sans-serif;
+  --nw-font-body:    'Manrope', 'Helvetica Neue', Arial, sans-serif;
+
+  /* --- KÖŞE YARIÇAPLARI ---
+     Sokak tarzının sıfır yuvarlaklığını yumuşatmak için ölçülü değerler. */
+  --nw-r-sm:   8px;
+  --nw-r-md:   14px;
+  --nw-r-lg:   20px;
+  --nw-r-pill: 999px;
+
+  /* --- GÖLGE --- */
+  --nw-shadow:    0 10px 30px rgba(0, 0, 0, 0.35);
+  --nw-shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.45);
+
+  /* Tarayıcının kendi çizdiği öğeler (tarih seçici, kaydırma çubuğu, otomatik
+     doldurma) de koyu tema kullansın. */
+  color-scheme: dark;
+
+  /* --- HAREKET --- */
+  --nw-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* Hareket azaltma tercihi olan kullanıcılarda tüm animasyonlar kapanır.
+   Erişilebilirlik için gerekli; kayan şerit gibi öğeler baş dönmesi yapabiliyor. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,16 @@
+# https://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+Allow: /
+
+# Yönetim paneli ve hesap sayfaları arama sonuçlarında yer almamalı.
+Disallow: /admin
+Disallow: /admin-login
+Disallow: /sepet
+Disallow: /siparislerim
+Disallow: /favoriler
+Disallow: /odeme-sonucu
+
+# TODO(alan adı): site yayına alınınca aşağıdaki satırı gerçek adresle
+# değiştirin, örn: Sitemap: https://novawear.com.tr/sitemap.xml
+# Sitemap: https://ALAN-ADINIZ/sitemap.xml
