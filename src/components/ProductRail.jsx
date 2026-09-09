@@ -18,20 +18,32 @@ import ProductCardSkeleton from './ProductCardSkeleton';
 
 const SKELETON_COUNT = 4;
 
-export default function ProductRail({ title, subtitle, badge, load, onSeeAll, emptyText }) {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+// items: liste dışarıdan verilebilir (ürün detay sayfası kendi sorgusunu
+// zaten yapıyor). Verilmezse şerit load() ile kendi verisini çeker.
+export default function ProductRail({ title, subtitle, badge, load, items, onSeeAll, emptyText }) {
+  const controlled = Array.isArray(items);
+  const [products, setProducts] = useState(controlled ? items : []);
+  const [loading, setLoading] = useState(!controlled);
   const [favorites, setFavorites] = useState([]);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
   const trackRef = useRef(null);
 
   useEffect(() => {
+    setFavorites(JSON.parse(localStorage.getItem('myFavorites') || '[]'));
+  }, []);
+
+  // Dışarıdan gelen liste değişince (başka bir ürüne geçildiğinde) yenile.
+  useEffect(() => {
+    if (controlled) setProducts(items);
+  }, [controlled, items]);
+
+  useEffect(() => {
+    if (controlled) return;
     let alive = true;
     load()
       .then((list) => { if (alive) setProducts(list); })
       .finally(() => { if (alive) setLoading(false); });
-    setFavorites(JSON.parse(localStorage.getItem('myFavorites') || '[]'));
     return () => { alive = false; };
     // load() her render'da yeni referans almasın diye bilerek boş bağımlılık;
     // bölümler sayfa açılışında bir kez yüklenir.

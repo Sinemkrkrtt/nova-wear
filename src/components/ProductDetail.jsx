@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 // EKLENDİ: useParams URL'deki ID'yi yakalamak için import edildi
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
-    Box, Typography, Button, IconButton, Divider, Card, CardMedia, CardContent,
+    Box, Typography, Button, IconButton, Divider,
     Stack, Accordion, AccordionSummary, AccordionDetails, Chip,
-    Snackbar, Alert, useTheme, useMediaQuery, CircularProgress // EKLENDİ: Yükleniyor animasyonu için CircularProgress
+    Snackbar, Alert, CircularProgress // EKLENDİ: Yükleniyor animasyonu için CircularProgress
 } from "@mui/material";
 
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -12,7 +12,6 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -21,18 +20,14 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { collection, getDocs, query, orderBy, limit, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../src/config/firebase';
 import { imageUrl, imageFallback } from '../utils/storage';
+import ProductRail from './ProductRail';
 
 function ProductDetail() {
     const location = useLocation();
     const navigate = useNavigate();
     // EKLENDİ: URL'den ürün ID'sini alıyoruz (Örn: /product/123456 -> id=123456)
     const { id } = useParams(); 
-    const theme = useTheme();
 
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm')); 
-    const isTablet = useMediaQuery(theme.breakpoints.down('md')); 
-    
-    const visibleCount = isTablet ? 3 : 4;
 
     // DEĞİŞTİRİLDİ: Artık product sabit bir değişken değil, bir state. Yüklenme durumu da eklendi.
     const [product, setProduct] = useState(null);
@@ -45,8 +40,6 @@ function ProductDetail() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const [newProducts, setNewProducts] = useState([]);
-    const [favoritesList, setFavoritesList] = useState([]);
-    const [sliderIndex, setSliderIndex] = useState(0);
 
     const brandFont = 'var(--nw-font-display)';
     const colors = {
@@ -59,8 +52,6 @@ function ProductDetail() {
         textMuted: "var(--nw-text-dim)", 
         border: "var(--nw-line)"
     };
-
-    const priorityCategories = ["Nişan & Söz", "Mezuniyet & Balo", "Kokteyl & Parti", "Abiye"];
 
     const getProductColor = (item) => {
         if (!item) return "";
@@ -107,7 +98,6 @@ function ProductDetail() {
         if (product) {
             const storedFavs = JSON.parse(localStorage.getItem('myFavorites') || '[]');
             setIsFavorite(!!storedFavs.find(item => item.id === product.id));
-            setFavoritesList(storedFavs);
             setSelectedSize(""); 
             setQuantity(1);
             setCurrentImageIndex(0); // Yeni ürüne geçildiğinde ilk görsele sıfırla
@@ -142,12 +132,6 @@ function ProductDetail() {
         }
     }, [product]);
 
-    useEffect(() => {
-        if (!isMobile && sliderIndex + visibleCount > newProducts.length) {
-            setSliderIndex(Math.max(0, newProducts.length - visibleCount));
-        }
-    }, [visibleCount, newProducts.length, sliderIndex, isMobile]);
-
     const toggleFavorite = () => {
         const storedFavs = JSON.parse(localStorage.getItem('myFavorites') || '[]');
         let updatedFavs;
@@ -158,19 +142,6 @@ function ProductDetail() {
         }
         localStorage.setItem('myFavorites', JSON.stringify(updatedFavs));
         setIsFavorite(!isFavorite);
-        setFavoritesList(updatedFavs);
-    };
-
-    const toggleCardFavorite = (e, item) => {
-        e.stopPropagation();
-        let updatedFavs;
-        if (favoritesList.find(fav => fav.id === item.id)) {
-            updatedFavs = favoritesList.filter(fav => fav.id !== item.id);
-        } else {
-            updatedFavs = [...favoritesList, item];
-        }
-        setFavoritesList(updatedFavs);
-        localStorage.setItem('myFavorites', JSON.stringify(updatedFavs));
     };
 
     const handleAddToCart = () => {
@@ -195,31 +166,6 @@ function ProductDetail() {
         }
         localStorage.setItem('myCart', JSON.stringify(updatedCart));
         setOpenSnackbar(true);
-        window.dispatchEvent(new Event('cartUpdated'));
-    };
-
-    const handleCardAddToCart = (e, item) => {
-        e.stopPropagation();
-        const storedCart = JSON.parse(localStorage.getItem('myCart') || '[]');
-        let updatedCart = [...storedCart];
-        const existingItemIndex = updatedCart.findIndex(cartItem => cartItem.id === item.id);
-
-        const itemColor = getProductColor(item);
-
-        if (existingItemIndex > -1) {
-            updatedCart[existingItemIndex].quantity = (updatedCart[existingItemIndex].quantity || 1) + 1;
-        } else {
-            updatedCart.push({ 
-                ...item, 
-                name: item.name,
-                quantity: 1, 
-                selectedSize: "Standart",
-                color: itemColor 
-            });
-        }
-
-        localStorage.setItem('myCart', JSON.stringify(updatedCart));
-        alert(`${item.name} sepete eklendi!`);
         window.dispatchEvent(new Event('cartUpdated'));
     };
 
@@ -286,15 +232,6 @@ function ProductDetail() {
         else if (quantity < selectedVariantStock) setQuantity(prev => prev + 1);
     };
     const handleDecrease = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
-
-    const handleNextSlider = () => {
-        if (sliderIndex + visibleCount < newProducts.length) setSliderIndex(sliderIndex + 1);
-    };
-    const handlePrevSlider = () => {
-        if (sliderIndex > 0) setSliderIndex(sliderIndex - 1);
-    };
-
-    const productsToRender = isMobile ? newProducts : newProducts.slice(sliderIndex, sliderIndex + visibleCount);
 
     const mainProductColor = getProductColor(product);
 
@@ -454,103 +391,20 @@ function ProductDetail() {
                 </Box>
             </Box>
 
-            {/* ALT KISIM: YENİ GELENLER */}
+            {/* ALT KISIM: YENİ GELENLER
+                Ana sayfadaki şeridin aynısı (ProductRail + ProductCard).
+                Önceden buraya ayrı bir MUI karuseli yazılmıştı; kartlar
+                'flex: 1' olduğu için ürün sayısı azaldığında tek kart tüm
+                satırı kaplayıp devasa görünüyordu. */}
             {newProducts.length > 0 && (
-                <Box sx={{ textAlign: "center", mt: { xs: 4, md: 8 }, pt: { xs: 4, md: 8 }, pb: 6, borderTop: `1px solid ${colors.border}`, maxWidth: "1300px", mx: "auto", px: { xs: 1, md: 4 } }}>
-                    
-                    <Box sx={{ mb: { xs: 4, md: 6 } }}>
-                        <Typography variant="h3" sx={{ fontFamily: brandFont, color: colors.textMain, fontWeight: 700, mb: 1, fontSize: { xs: "2rem", md: "3rem" } }}>
-                            Yeni Gelenler
-                        </Typography>
-                        <Typography variant="body1" sx={{ color: colors.textMuted, fontFamily: brandFont, fontStyle: "italic", fontSize: { xs: "1rem", md: "1.2rem" } }}>
-                            En yeni tasarımlarımızla tarzını tazele.
-                        </Typography>
-                    </Box>
-
-                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", width: "100%" }}>
-                        
-                        {!isMobile && (
-                            <IconButton 
-                                onClick={handlePrevSlider} disabled={sliderIndex === 0} 
-                                sx={{ width: 50, height: 50, bgcolor: "var(--nw-surface)", boxShadow: "0 4px 12px rgba(0,0,0,0.05)", color: "var(--nw-text-dim)", mr: 2, "&:hover": { bgcolor: "var(--nw-bg-elev)", color: colors.primary }, "&:disabled": { opacity: 0.3 } }}
-                            >
-                                <ArrowBackIosNewIcon sx={{ fontSize: 20 }} />
-                            </IconButton>
-                        )}
-
-                        <Box sx={{ 
-                            display: 'flex', gap: { xs: 2, md: 3 }, width: '100%', overflowX: { xs: 'auto', md: 'hidden' }, 
-                            scrollSnapType: { xs: 'x mandatory', md: 'none' }, scrollBehavior: 'smooth', pb: { xs: 2, md: 0 }, '&::-webkit-scrollbar': { display: 'none' } 
-                        }}>
-                            {productsToRender.map((item) => {
-                                let cardCategory = "";
-                                if (Array.isArray(item.category)) {
-                                    cardCategory = item.category.find(cat => priorityCategories.includes(cat)) || item.category[0];
-                                } else {
-                                    cardCategory = item.category || "";
-                                }
-
-                                const cardTotalStock = (item.variants && item.variants.length > 0) ? item.variants.reduce((acc, curr) => acc + (Number(curr.stock) || 0), 0) : 0;
-                                const cardOutOfStock = cardTotalStock === 0;
-                                const cardImage = item.images && item.images.length > 0 ? item.images[0] : item.imageUrl;
-                                
-                                const cardColor = getProductColor(item);
-                                const displayCardName = cardColor ? `${item.name} - ${cardColor}` : item.name;
-                                const truncatedCardName = displayCardName.length > 20 && isMobile ? displayCardName.substring(0, 20) + "..." : displayCardName;
-
-                                return (
-                                    <Box key={item.id} sx={{ minWidth: { xs: 'calc(50% - 8px)', md: '0' }, flex: { xs: '0 0 auto', md: '1 1 0' }, scrollSnapAlign: 'start' }}>
-                                        <Card onClick={() => navigate(`/product/${item.id}`, { state: item })} elevation={0} sx={{ borderRadius: { xs: 2, md: 4 }, textAlign: "left", bgcolor: "var(--nw-surface)", height: "100%", width: "100%", display: "flex", flexDirection: "column", position: "relative", cursor: "pointer", border: "1px solid var(--nw-line)", transition: "all 0.3s ease", overflow: "hidden", "&:hover": { transform: "translateY(-5px)", boxShadow: "0 15px 30px rgba(155, 112, 255, 0.08)", borderColor: "var(--nw-line)" }, "&:hover .product-image": { transform: "scale(1.08)" } }}>
-                                           
-                                           {cardOutOfStock ? (
-                                                <Chip label="STOKTA YOK" size="small" sx={{ position: "absolute", top: { xs: 8, md: 15 }, left: { xs: 8, md: 15 }, zIndex: 2, bgcolor: "var(--nw-danger)", color: "var(--nw-on-accent)", fontWeight: 700, fontFamily: brandFont, fontSize: { xs: "0.6rem", md: "0.7rem" }, borderRadius: "50px", letterSpacing: 0.5, px: 0.5 }} />
-                                            ) : (
-                                                <Chip label="YENİ" size="small" sx={{ position: "absolute", top: { xs: 8, md: 15 }, left: { xs: 8, md: 15 }, zIndex: 2, bgcolor: colors.primary, color: "var(--nw-on-accent)", fontWeight: 700, fontFamily: brandFont, fontSize: { xs: "0.6rem", md: "0.7rem" }, borderRadius: "50px", letterSpacing: 0.5, px: 0.5 }} />
-                                            )}
-                                            
-                                            <IconButton sx={{ position: "absolute", top: { xs: 4, md: 10 }, right: { xs: 4, md: 10 }, zIndex: 2, width: { xs: 32, md: 40 }, height: { xs: 32, md: 40 }, bgcolor: "rgba(255,255,255,0.9)", boxShadow: "0 2px 4px rgba(0,0,0,0.05)", "&:hover": { bgcolor: "var(--nw-surface)", color: colors.primary } }} onClick={(e) => toggleCardFavorite(e, item)}>
-                                                {favoritesList.find(fav => fav.id === item.id) ? <FavoriteIcon sx={{ color: colors.primary, fontSize: { xs: 18, md: 22 } }} /> : <FavoriteBorderIcon sx={{ color: "var(--nw-text-faint)", fontSize: { xs: 18, md: 22 } }} />}
-                                            </IconButton>
-
-                                            <Box sx={{ width: "100%", paddingTop: "133.33%", position: "relative", overflow: "hidden", bgcolor: "var(--nw-bg-elev)" }}>
-                                                <CardMedia className="product-image" component="img" image={imageUrl(cardImage, 500)} alt={item.name} onError={imageFallback} sx={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", transition: "transform 0.5s ease", filter: cardOutOfStock ? "grayscale(40%)" : "none" }} />
-                                            </Box>
-
-                                            <CardContent sx={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", p: { xs: 1.5, md: 2.5 } }}>
-                                                <Box>
-                                                    <Typography variant="subtitle1" sx={{ fontWeight: 600, fontFamily: brandFont, color: "var(--nw-text)", fontSize: { xs: "1rem", md: "1.15rem" }, lineHeight: 1.3, mb: 0.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', minHeight: '2.6em' }}>
-                                                        {truncatedCardName}
-                                                    </Typography>
-                                                    <Typography variant="body2" sx={{ color: colors.textMuted, fontFamily: brandFont, fontSize: { xs: "0.85rem", md: "0.95rem" } }}>{cardCategory}</Typography>
-                                                </Box>
-                                                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: { xs: 1, md: 2 } }}>
-                                                    <Typography sx={{ color: cardOutOfStock ? "var(--nw-text-faint)" : colors.textMain, fontWeight: 700, fontFamily: brandFont, fontSize: { xs: "1rem", md: "1.2rem" }, textDecoration: cardOutOfStock ? "line-through" : "none" }}>{item.price} ₺</Typography>
-                                                    
-                                                    <Button 
-                                                        disabled={cardOutOfStock} onClick={(e) => handleCardAddToCart(e, item)} variant="outlined" 
-                                                        sx={{ 
-                                                            borderRadius: "50%", minWidth: { xs: 32, md: 40 }, width: { xs: 32, md: 40 }, height: { xs: 32, md: 40 }, p: 0,
-                                                            borderColor: colors.border, color: colors.textMuted, transition: '0.2s',
-                                                            "&:hover": { bgcolor: colors.primary, color: "var(--nw-on-accent)", borderColor: colors.primary },
-                                                            "&:disabled": { borderColor: "var(--nw-line)", bgcolor: "var(--nw-bg-elev)", color: "var(--nw-text-faint)" }
-                                                        }}
-                                                    >
-                                                        <ShoppingBagOutlinedIcon sx={{ fontSize: { xs: 16, md: 20 } }} />
-                                                    </Button>
-                                                </Box>
-                                            </CardContent>
-                                        </Card>
-                                    </Box>
-                                );
-                            })}
-                        </Box>
-
-                        {!isMobile && (
-                            <IconButton onClick={handleNextSlider} disabled={sliderIndex + visibleCount >= newProducts.length} sx={{ width: 50, height: 50, bgcolor: "var(--nw-surface)", boxShadow: "0 4px 12px rgba(0,0,0,0.05)", color: "var(--nw-text-dim)", ml: 2, opacity: sliderIndex + visibleCount >= newProducts.length ? 0.3 : 1, "&:hover": { bgcolor: "var(--nw-bg-elev)", color: colors.primary } }}>
-                                <ArrowForwardIosIcon sx={{ fontSize: 20 }} />
-                            </IconButton>
-                        )}
-                    </Box>
+                <Box sx={{ borderTop: `1px solid ${colors.border}`, mt: { xs: 4, md: 8 } }}>
+                    <ProductRail
+                        title="Yeni gelenler"
+                        subtitle="En yeni tasarımlarımızla tarzını tazele."
+                        badge="YENİ"
+                        items={newProducts}
+                        onSeeAll={() => navigate('/yeni-gelenler')}
+                    />
                 </Box>
             )}
 
