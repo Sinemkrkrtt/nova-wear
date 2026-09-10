@@ -1544,8 +1544,12 @@ button { font-family: var(--nw-font-body); }
 .nw-crumbs a:hover { color: var(--nw-accent); }
 
 .nw-collection-head {
-  position: relative;
-  padding: clamp(16px, 2.4vw, 24px) 0 clamp(24px, 3.5vw, 36px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: clamp(16px, 3vw, 40px);
+  /* Alt boşluk dar: hem alt başlık hem sağdaki sayı ayraç çizgisine yakın dursun. */
+  padding: clamp(16px, 2.4vw, 24px) 0 clamp(11px, 1.5vw, 15px);
   border-bottom: 1px solid var(--nw-line);
   margin-bottom: clamp(24px, 3.5vw, 36px);
 }
@@ -1574,16 +1578,13 @@ button { font-family: var(--nw-font-body); }
 /* --- SIRALAMA ---
    Ayrı bir araç çubuğu satırı yok: ürün sayısı ve sıralama, başlığın sağ alt
    köşesinde alt başlıkla aynı hizada duruyor. */
+/* Sıralama üstte, ürün sayısı altında — ikisi de sağa yaslı ve ayraç
+   çizgisinin hemen üstünde (ızgara 'align-items: end' ile hizalıyor). */
 .nw-collection-meta {
-  position: absolute;
-  right: 0;
-  /* Başlığı ürünlerden ayıran çizginin hemen üstünde, en sağda.
-     'bottom' kapsayıcının iç kutusuna göre ölçülür; çizgi o kutunun hemen
-     altında olduğu için küçük bir pay yeterli. */
-  bottom: 10px;
   display: flex;
-  align-items: center;
-  gap: clamp(14px, 2vw, 26px);
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 9px;
 }
 .nw-collection-count { position: static; }
 .nw-sort { display: flex; align-items: center; gap: 10px; cursor: pointer; }
@@ -1663,12 +1664,15 @@ button { font-family: var(--nw-font-body); }
 @media (max-width: 700px) {
   /* Dar ekranda iki sütun kalsın: tek sütun kartları gereksiz büyütüyor. */
   .nw-grid { grid-template-columns: repeat(2, 1fr); }
-  /* Sağ üst köşede yer kalmıyor: sayı ve sıralama başlığın altına, karşılıklı. */
+  /* Yan yana yer kalmıyor: başlık üstte, sayı ve sıralama altında karşılıklı.
+     'row-reverse' ile sayı solda, sıralama sağda kalıyor. */
+  .nw-collection-head { grid-template-columns: 1fr; }
   .nw-collection-meta {
-    position: static;
-    margin-top: 16px;
+    flex-direction: row-reverse;
+    align-items: center;
     justify-content: space-between;
     width: 100%;
+    margin-top: 4px;
   }
 }
 

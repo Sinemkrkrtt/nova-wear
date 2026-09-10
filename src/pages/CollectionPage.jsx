@@ -135,14 +135,17 @@ export default function CollectionPage({
           <span>{title}</span>
         </nav>
 
+        {/* Başlık ile sağdaki sayı/sıralama iki ayrı sütun: mutlak konum yerine
+            ızgara kullanılıyor, böylece uzun bir alt başlık sağdaki kutunun
+            altına giremiyor. */}
         <header className="nw-collection-head">
-          <h1>{title}</h1>
-          {subtitle && <p>{subtitle}</p>}
-          {/* Ürün sayısı ve sıralama başlığın sağ alt köşesinde: ayrı bir
-              araç çubuğu satırı açmadan, aynı hizada. */}
+          <div className="nw-collection-titles">
+            <h1>{title}</h1>
+            {subtitle && <p>{subtitle}</p>}
+          </div>
+
           {!loading && items.length > 0 && (
             <div className="nw-collection-meta">
-              <span className="nw-collection-count">{visible.length} ürün</span>
               <label className="nw-sort">
                 <span className="nw-label">Sırala</span>
                 <select
@@ -154,6 +157,8 @@ export default function CollectionPage({
                   {SORTS.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
                 </select>
               </label>
+
+              <span className="nw-collection-count">{visible.length} ürün</span>
             </div>
           )}
         </header>
