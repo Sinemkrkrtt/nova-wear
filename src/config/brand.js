@@ -21,7 +21,7 @@ export const BRAND = {
   // --- İletişim ---
   email: 'novawear.destek@gmail.com',
   // Okunurluk için gruplanmış yazılıyor; aramada sorun çıkarmaz.
-  phone: '0551 943 85 72',
+  phone: '0551 943 85 71',
 
   // --- Satıcı / şirket bilgileri (DOLDURULACAK) ---
   // Yasal metinlerde "SATICI" olarak geçer.
