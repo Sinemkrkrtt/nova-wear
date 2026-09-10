@@ -1577,9 +1577,10 @@ button { font-family: var(--nw-font-body); }
 .nw-collection-meta {
   position: absolute;
   right: 0;
-  /* Alt başlık hizasında değil, başlığın ilk satırıyla aynı yükseklikte:
-     sayı ve sıralama, ayracın sağ üst köşesinde duruyor. */
-  top: clamp(18px, 2.6vw, 26px);
+  /* Başlığı ürünlerden ayıran çizginin hemen üstünde, en sağda.
+     'bottom' kapsayıcının iç kutusuna göre ölçülür; çizgi o kutunun hemen
+     altında olduğu için küçük bir pay yeterli. */
+  bottom: 10px;
   display: flex;
   align-items: center;
   gap: clamp(14px, 2vw, 26px);
