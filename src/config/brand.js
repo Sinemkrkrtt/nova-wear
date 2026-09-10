@@ -18,9 +18,10 @@ export const BRAND = {
   slogan: 'Shine like a nova.',
   description: 'Özel günler için zarif elbiseler.',
 
-  // --- İletişim (DOLDURULACAK) ---
-  email: 'novawear@gmail.com',
-  phone: 'DOLDURULACAK',
+  // --- İletişim ---
+  email: 'novawear.destek@gmail.com',
+  // Okunurluk için gruplanmış yazılıyor; aramada sorun çıkarmaz.
+  phone: '0551 943 85 72',
 
   // --- Satıcı / şirket bilgileri (DOLDURULACAK) ---
   // Yasal metinlerde "SATICI" olarak geçer.
