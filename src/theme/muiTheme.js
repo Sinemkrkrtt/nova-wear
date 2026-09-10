@@ -12,32 +12,32 @@ import { createTheme } from '@mui/material/styles';
 // ---------------------------------------------------------------------------
 
 export const nw = {
-  bg: '#000000',
-  bgElev: '#1A1A20',
-  surface: '#202027',
-  surface2: '#2A2A33',
-  line: 'rgba(255,255,255,0.09)',
-  lineStrong: 'rgba(255,255,255,0.17)',
-  text: '#F4F4F7',
-  textDim: '#A2A2AE',
-  textFaint: '#6E6E7B',
-  accent: '#9B70FF',
-  accentHover: '#B18FFF',
-  accentSoft: 'rgba(155,112,255,0.16)',
-  onAccent: '#150A26',
-  success: '#3DD68C',
-  danger: '#FF5F5F',
-  warning: '#FFB450',
-  // Syne'de ₺ simgesi bulunmadığı için listede hemen ardından Manrope var:
-  // tarayıcı yalnızca eksik simgeyi ondan alır (bkz. tokens.css).
-  fontDisplay: "'Syne', 'Manrope', 'Helvetica Neue', Arial, sans-serif",
-  fontBody: "'Manrope', 'Helvetica Neue', Arial, sans-serif",
-  radius: { sm: 8, md: 14, lg: 20, pill: 999 },
+  bg: '#FBF8F7',
+  bgElev: '#FFFFFF',
+  surface: '#FFFFFF',
+  surface2: '#F3ECEB',
+  line: 'rgba(23,16,15,0.10)',
+  lineStrong: 'rgba(23,16,15,0.22)',
+  text: '#17100F',
+  textDim: '#6E6261',
+  textFaint: '#9C908F',
+  accent: '#B85C74',
+  accentHover: '#9C4A61',
+  accentSoft: 'rgba(184,92,116,0.09)',
+  onAccent: '#FFFFFF',
+  success: '#1E8A5C',
+  danger: '#C0392B',
+  warning: '#B0741A',
+  // Fiyatlar display fontuyla yazılmaz: Cormorant'ın ₺ simgesi el yazısı
+  // biçiminde ve Türk lirası işaretine benzemiyor (bkz. tokens.css).
+  fontDisplay: "'Cormorant Garamond', 'Jost', 'Times New Roman', serif",
+  fontBody: "'Jost', 'Helvetica Neue', Arial, sans-serif",
+  radius: { sm: 2, md: 3, lg: 4, pill: 999 },
 };
 
 const theme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: 'light',
     background: { default: nw.bg, paper: nw.surface },
     primary: { main: nw.accent, contrastText: nw.onAccent },
     secondary: { main: nw.text, contrastText: nw.bg },
@@ -52,12 +52,14 @@ const theme = createTheme({
   typography: {
     fontFamily: nw.fontBody,
     // Başlıklar display fontunu kullanır; gövde metni Inter'de kalır.
-    h1: { fontFamily: nw.fontDisplay, fontWeight: 700, letterSpacing: '-0.03em' },
-    h2: { fontFamily: nw.fontDisplay, fontWeight: 700, letterSpacing: '-0.025em' },
-    h3: { fontFamily: nw.fontDisplay, fontWeight: 700, letterSpacing: '-0.02em' },
-    h4: { fontFamily: nw.fontDisplay, fontWeight: 600, letterSpacing: '-0.015em' },
-    h5: { fontFamily: nw.fontDisplay, fontWeight: 600 },
-    h6: { fontFamily: nw.fontDisplay, fontWeight: 600 },
+    // Serif display'de kalın ağırlık kabalaşıyor; zarafet ince ağırlıktan
+    // ve nefes alan harf aralığından geliyor.
+    h1: { fontFamily: nw.fontDisplay, fontWeight: 300, letterSpacing: '-0.005em' },
+    h2: { fontFamily: nw.fontDisplay, fontWeight: 300, letterSpacing: '-0.005em' },
+    h3: { fontFamily: nw.fontDisplay, fontWeight: 400, letterSpacing: 0 },
+    h4: { fontFamily: nw.fontDisplay, fontWeight: 400, letterSpacing: 0 },
+    h5: { fontFamily: nw.fontDisplay, fontWeight: 400 },
+    h6: { fontFamily: nw.fontDisplay, fontWeight: 500 },
     button: { fontFamily: nw.fontBody, fontWeight: 600, textTransform: 'none' },
   },
 

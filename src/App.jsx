@@ -41,6 +41,7 @@ import SearchResults from './pages/Arama';
 import PaymentResult from './pages/PaymentResult';
 import MyOrders from './pages/MyOrders';
 import NotFound from './pages/NotFound';
+import Statement from './components/Statement';
 
 function App() {
   return (
@@ -60,6 +61,7 @@ function App() {
                 <NewArrivals />
                 <TrustBar />
                 <PopularCollection />
+                <Statement />
                 <Footer />
               </div>
             } 
@@ -86,7 +88,7 @@ function App() {
             element={
               <CollectionPage
                 title="Yeni gelenler"
-                subtitle="Bu sezon rafa çıkan son parçalar"
+                subtitle="Sezonun rafa yeni çıkan elbiseleri"
                 badge="YENİ"
                 load={() => fetchNewArrivals(60)}
                 empty={{
@@ -96,7 +98,7 @@ function App() {
                       <path d="M12 3v18M3 12h18" />
                     </svg>
                   ),
-                  title: 'Henüz yeni ürün yok',
+                  title: 'Henüz yeni elbise yok',
                   text: 'Bu sezonun ilk parçaları eklendiğinde burada listelenecek.',
                   primary: { label: 'Çok satanlar', to: '/cok-satanlar' },
                   secondary: { label: 'Ana sayfa', to: '/' },
@@ -109,7 +111,7 @@ function App() {
             element={
               <CollectionPage
                 title="Çok satanlar"
-                subtitle="En çok tercih edilen parçalar"
+                subtitle="En çok tercih edilen elbiseler"
                 load={() => fetchBestSellers(60)}
                 empty={{
                   icon: (
@@ -119,7 +121,7 @@ function App() {
                     </svg>
                   ),
                   title: 'Henüz satış verisi yok',
-                  text: 'Siparişler gelmeye başladıkça en çok tercih edilen parçalar burada sıralanacak.',
+                  text: 'Siparişler gelmeye başladıkça en çok tercih edilen elbiseler burada sıralanacak.',
                   primary: { label: 'Yeni gelenler', to: '/yeni-gelenler' },
                   secondary: { label: 'Ana sayfa', to: '/' },
                 }}

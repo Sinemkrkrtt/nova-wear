@@ -106,16 +106,16 @@ export default function Hero() {
       <div className="nw-wrap">
         <div className="nw-hero-inner">
           <div>
-            <div className="nw-eyebrow">Sonbahar / Kış 2026</div>
+            <div className="nw-eyebrow">Abiye &amp; Davet — 2026</div>
 
             <h1>
-              Günlük giyime<br />
-              <span className="nw-outline">yeni</span> bir standart
+              Gecenin<br />
+              <em>en zarif</em> hali
             </h1>
 
             <p>
-              Doğru kumaş, doğru kesim, abartısız tasarım. Her gün giyebileceğin
-              parçalar — sezon geçse de eskimeyen.
+              Davet, nişan ve özel geceler için elbiseler. Kumaşın düşüşü,
+              kesimin oturuşu ve detayın sadeliği üzerine kurulu.
             </p>
 
             <div className="nw-hero-actions">

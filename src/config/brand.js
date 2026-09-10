@@ -16,7 +16,7 @@ export const BRAND = {
   // --- Görünen marka kimliği ---
   name: 'Nova Wear',
   slogan: 'Tarzınla parla.',
-  description: 'Günlük giyimde doğru kumaş, abartısız kesim.',
+  description: 'Özel günler için zarif elbiseler.',
 
   // --- İletişim (DOLDURULACAK) ---
   email: 'novawear@gmail.com',

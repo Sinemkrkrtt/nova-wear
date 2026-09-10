@@ -33,11 +33,14 @@ body {
   overflow-x: clip;
 }
 
+/* Serif başlıklarda sıkışık harf aralığı kabalaşıyor: neredeyse nötr bırakıp
+   ağırlığı inceltiyoruz. Zarafet buradan geliyor. */
 .nw-page h1,
 .nw-page h2,
 .nw-page h3 {
   font-family: var(--nw-font-display);
-  letter-spacing: -0.025em;
+  font-weight: 300;
+  letter-spacing: -0.005em;
 }
 
 .nw-wrap {
@@ -73,7 +76,7 @@ body {
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(900px 420px at 78% 8%, var(--nw-accent-soft), transparent 62%),
+    radial-gradient(1100px 520px at 72% 0%, var(--nw-accent-soft), transparent 68%),
     var(--nw-bg);
   border-bottom: 1px solid var(--nw-line);
 }
@@ -88,43 +91,46 @@ body {
 .nw-eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 11.5px;
-  font-weight: 600;
-  letter-spacing: 0.22em;
+  gap: 14px;
+  font-family: var(--nw-font-body);
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0.34em;
   text-transform: uppercase;
   color: var(--nw-accent);
-  margin-bottom: 22px;
+  margin-bottom: 26px;
 }
 .nw-eyebrow::before {
   content: "";
-  width: 26px;
+  width: 40px;
   height: 1px;
-  background: var(--nw-accent);
+  background: var(--nw-accent-line);
 }
+/* Serif başlık iri ve ince: modaevi ilanı ölçeği. Satır arası 1'in altına
+   inmiyor, çünkü Cormorant'ın uzun çıkıntıları (g, y, ğ) birbirine değer. */
 .nw-hero h1 {
-  /* Syne, Space Grotesk'ten belirgin biçimde geniş: aynı puntoda başlık üç
-     satıra taşıyordu. Üst sınır düşürüldü ve harf aralığı biraz sıkıldı. */
-  font-size: clamp(2.4rem, 5.4vw, 3.9rem);
-  line-height: 1.02;
-  letter-spacing: -0.035em;
-  font-weight: 700;
+  font-size: clamp(2.9rem, 6.6vw, 5.2rem);
+  line-height: 1.05;
+  letter-spacing: -0.012em;
+  font-weight: 300;
   margin: 0;
 }
-/* Vurgulu kelime: dolgu yerine kontur — başlığı ağırlaştırmadan renk katar. */
-.nw-hero h1 .nw-outline {
-  color: transparent;
-  -webkit-text-stroke: 1.6px var(--nw-accent);
-  paint-order: stroke fill;
+/* Vurgulu kelime: kontur numarası yerine serifin kendi italiği — daha
+   zarif ve yazının doğal parçası gibi duruyor. */
+.nw-hero h1 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--nw-accent);
 }
 .nw-hero p {
   color: var(--nw-text-dim);
-  font-size: clamp(0.95rem, 1.6vw, 1.05rem);
-  line-height: 1.7;
-  max-width: 430px;
-  margin: 24px 0 34px;
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+  font-weight: 300;
+  line-height: 1.85;
+  max-width: 420px;
+  margin: 26px 0 38px;
 }
-.nw-hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.nw-hero-actions { display: flex; flex-wrap: wrap; gap: 14px; }
 
 .nw-hero-media {
   position: relative;
@@ -147,26 +153,17 @@ body {
   aspect-ratio: 16 / 11;
   /* Zemin siyah kalıyor ama alan boş bir delik gibi durmasın diye arkada
      yumuşak bir mor ışıma ve saç teli inceliğinde bir çerçeve var. */
-  /* Üç katman:
-       1) içerideki mor ışıma        (padding-box)
-       2) siyah zemin                (padding-box)
-       3) çerçevenin kendisi         (border-box)
-     3. katman yalnızca 1px'lik kenar şeridinde görünür; degrade olduğu için
-     çerçeve üstte parlak, aşağı inerken sönümleniyor — düz bir çizgiden çok
-     ışığın kenara vurması gibi duruyor. */
+  /* Kutu yok: yalnızca logonun arkasında çok yumuşak bir gül ışıması.
+     Açık zeminde çerçeve çizmek kutu hissi yaratıyor, zarafeti bozuyordu. */
+  /* Zeminin sayfa rengiyle AYNI olması şart: 'multiply' karışımı altında bir
+     renk bulamazsa (saydam zemin) görselin beyazı olduğu gibi basılır ve
+     logo beyaz bir kutu içinde kalırdı. */
   background:
-    radial-gradient(400px 260px at 50% 44%, var(--nw-accent-soft), transparent 72%) padding-box,
-    linear-gradient(var(--nw-bg), var(--nw-bg)) padding-box,
-    linear-gradient(155deg,
-      rgba(155, 112, 255, 0.60) 0%,
-      rgba(155, 112, 255, 0.16) 42%,
-      rgba(255, 255, 255, 0.07) 100%) border-box;
-  border: 1px solid transparent;
-  border-radius: var(--nw-r-lg);
-  /* Hâle hafif aşağı kaydırıldı: kutu zeminin üzerinde duruyormuş hissi. */
-  box-shadow:
-    0 26px 80px -26px rgba(155, 112, 255, 0.45),
-    0 0 130px -40px rgba(155, 112, 255, 0.35);
+    radial-gradient(460px 300px at 50% 46%, var(--nw-accent-soft), transparent 70%),
+    var(--nw-bg);
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 /* Logo görselinin zemini saf siyah olduğu için 'screen' karışımında o siyah
@@ -176,10 +173,10 @@ body {
 
 /* --- LOGONUN ÜZERİNDEN GEÇEN IŞIK ---
    Eğik bir ışık şeridi belirli aralıklarla logonun üzerinden kayıyor.
-   Numara 'overlay' karışımında: bu karışım siyah zemini SİYAH bırakır
-   (overlay(0, x) = 0), yalnızca zaten aydınlık olan pikselleri parlatır.
-   Yani şerit boş alanda görünmez, sadece harflerin ve halkanın üzerinden
-   geçerken parlar — tam da metalin üzerinden ışık geçmesi gibi.
+   Numara 'multiply' karışımında: bu karışım BEYAZI hiç değiştirmez
+   (multiply(x, beyaz) = x), yalnızca üzerinden geçtiği yeri koyulaştırır.
+   Şerit beyazdan güle, güden beyaza gittiği için sayfada iz bırakmadan
+   logonun üzerinden gül rengi bir aydınlık geçiyor.
 
    Hareket azaltma tercihi olan kullanıcılarda tokens.css'teki genel kural
    bu animasyonu da durduruyor. */
@@ -192,16 +189,13 @@ body {
   pointer-events: none;
   background: linear-gradient(
     100deg,
-    transparent 34%,
-    rgba(155, 112, 255, 0.10) 44%,
-    rgba(214, 196, 255, 0.22) 50%,
-    rgba(155, 112, 255, 0.10) 56%,
-    transparent 66%
+    #ffffff 34%,
+    rgba(250, 232, 236, 1) 44%,
+    rgba(242, 208, 216, 1) 50%,
+    rgba(250, 232, 236, 1) 56%,
+    #ffffff 66%
   );
-  /* 'screen': altındaki her şeyi aydınlatır, hiçbir yeri karartmaz. Işık
-     huzmesi hem siyah zeminde mor bir iz bırakır hem de logonun üzerinden
-     geçerken harfleri ve halkayı parlatır. */
-  mix-blend-mode: screen;
+  mix-blend-mode: multiply;
   transform: translateX(-115%);
   animation: nw-sheen 6.5s ease-in-out infinite;
 }
@@ -213,6 +207,10 @@ body {
   34%, 100% { transform: translateX(115%); }
 }
 
+/* Logo görselinin zemini saf beyaz; 'multiply' ile o beyaz tamamen kaybolur.
+   Böylece logo bir kutunun içinde değil, doğrudan sayfanın üzerinde durur. */
+.nw-hero-media.is-logo img { mix-blend-mode: multiply; }
+
 .nw-hero-media img {
   width: 100%;
   height: 100%;
@@ -221,22 +219,26 @@ body {
 }
 
 /* --- BUTONLAR ---------------------------------------------------------- */
+/* Butonlar artık hap değil: dik köşeli, geniş harf aralıklı, küçük puntolu.
+   Zıplama efekti kaldırıldı — sakin geçişler daha pahalı duruyor. */
 .nw-btn {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  justify-content: center;
+  gap: 10px;
   font-family: var(--nw-font-body);
-  font-size: 13.5px;
-  font-weight: 600;
-  padding: 14px 26px;
-  border-radius: var(--nw-r-pill);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 16px 34px;
+  border-radius: var(--nw-r-sm);
   border: 1px solid transparent;
   cursor: pointer;
   text-decoration: none;
-  transition: transform 0.18s var(--nw-ease), background 0.18s var(--nw-ease),
-              border-color 0.18s var(--nw-ease);
+  transition: background 0.3s var(--nw-ease), border-color 0.3s var(--nw-ease),
+              color 0.3s var(--nw-ease);
 }
-.nw-btn:hover { transform: translateY(-1px); }
 .nw-btn-primary { background: var(--nw-accent); color: var(--nw-on-accent); }
 .nw-btn-primary:hover { background: var(--nw-accent-hover); }
 .nw-btn-ghost {
@@ -244,7 +246,7 @@ body {
   color: var(--nw-text);
   border-color: var(--nw-line-strong);
 }
-.nw-btn-ghost:hover { background: var(--nw-surface); border-color: var(--nw-text-faint); }
+.nw-btn-ghost:hover { border-color: var(--nw-accent); color: var(--nw-accent); }
 
 /* --- BÖLÜM BAŞLIĞI ----------------------------------------------------- */
 /* DİKKAT: burada kısayol 'padding' KULLANILMAZ. Bu sınıf .nw-wrap ile
@@ -262,77 +264,90 @@ body {
   margin-bottom: clamp(20px, 3vw, 30px);
 }
 .nw-section-head h2 {
-  font-size: clamp(1.5rem, 3.4vw, 2.15rem);
-  font-weight: 700;
+  font-size: clamp(1.8rem, 3.8vw, 2.7rem);
+  font-weight: 300;
+  letter-spacing: -0.005em;
   margin: 0;
 }
 .nw-section-head p {
-  margin: 7px 0 0;
+  margin: 9px 0 0;
   color: var(--nw-text-faint);
-  font-size: 13px;
+  font-size: 12.5px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
 }
+/* Bağlantı bir buton gibi değil, altı ince çizgiyle çizilmiş bir söz gibi. */
 .nw-section-link {
-  color: var(--nw-accent);
-  font-size: 13px;
-  font-weight: 600;
+  position: relative;
+  color: var(--nw-text-dim);
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--nw-line-strong);
+  transition: color 0.3s var(--nw-ease), border-color 0.3s var(--nw-ease);
 }
-.nw-section-link:hover { color: var(--nw-accent-hover); }
+.nw-section-link:hover { color: var(--nw-accent); border-color: var(--nw-accent); }
 
 /* --- GÜVEN ŞERİDİ -------------------------------------------------------
    İki ürün karuselinin arasında durduğu için kutu yığını değil, tek parça
    bir şerit: bölümleri ayırırken sayfaya nefes veriyor. */
+/* Kutu yığını değil, sayfayı yatay olarak kesen ince bir band: üstte ve altta
+   saç teli çizgi, aralarda dikey ayraçlar. Dolgu yok — nefes var. */
 .nw-trust {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  margin: clamp(30px, 4.5vw, 52px) 0;
-  border: 1px solid var(--nw-line);
-  border-radius: var(--nw-r-lg);
-  overflow: hidden;
-  background:
-    radial-gradient(720px 150px at 50% 0%, var(--nw-accent-soft), transparent 70%),
-    var(--nw-bg-elev);
+  margin: clamp(34px, 5vw, 62px) 0;
+  border-top: 1px solid var(--nw-line);
+  border-bottom: 1px solid var(--nw-line);
+  background: none;
 }
 
 .nw-trust-item {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 14px;
-  padding: clamp(20px, 2.6vw, 28px) clamp(16px, 2vw, 26px);
-  /* Kutu kenarlığı yerine yalnızca aralara ince ayraç. */
+  text-align: center;
+  gap: 12px;
+  padding: clamp(26px, 3.4vw, 40px) clamp(12px, 2vw, 24px);
   border-left: 1px solid var(--nw-line);
 }
 .nw-trust-item:first-child { border-left: 0; }
 
+/* Daire zemin kaldırıldı: yalnızca ince çizgili simge, vurgu renginde. */
 .nw-trust-icon {
   flex-shrink: 0;
-  width: 42px;
-  height: 42px;
   display: grid;
   place-items: center;
-  border-radius: var(--nw-r-pill);
-  background: var(--nw-accent-soft);
   color: var(--nw-accent);
+  opacity: 0.9;
 }
 
 .nw-trust-text { display: flex; flex-direction: column; min-width: 0; }
 .nw-trust-text strong {
-  font-family: var(--nw-font-display);
-  font-size: 14.5px;
-  font-weight: 600;
+  font-family: var(--nw-font-body);
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
   color: var(--nw-text);
-  margin-bottom: 3px;
+  margin-bottom: 8px;
 }
 .nw-trust-text span {
   font-size: 12.5px;
+  font-weight: 300;
   color: var(--nw-text-faint);
-  line-height: 1.45;
+  line-height: 1.55;
 }
 
 @media (max-width: 900px) {
   .nw-hero-inner { grid-template-columns: 1fr; }
+  /* Dar ekranda butonlar alt alta düşüyor; farklı genişlikte durmasınlar. */
+  .nw-hero-actions .nw-btn { flex: 1 1 200px; }
   /* Tek sütuna düşünce eşitlenecek bir komşu kalmadığı için burada
      yeniden bir oran veriliyor. */
   .nw-hero-media { order: 2; aspect-ratio: 16 / 11; min-height: 0; }
@@ -352,20 +367,20 @@ body {
 .nw-rail-nav { display: flex; align-items: center; gap: 10px; }
 
 .nw-rail-arrow {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   display: grid;
   place-items: center;
   border-radius: var(--nw-r-pill);
   border: 1px solid var(--nw-line);
-  background: var(--nw-surface);
-  color: var(--nw-text);
+  background: transparent;
+  color: var(--nw-text-dim);
   cursor: pointer;
-  transition: all 0.18s var(--nw-ease);
+  transition: all 0.3s var(--nw-ease);
 }
 .nw-rail-arrow:hover:not(:disabled) {
-  background: var(--nw-surface-2);
-  border-color: var(--nw-line-strong);
+  border-color: var(--nw-accent);
+  color: var(--nw-accent);
 }
 .nw-rail-arrow:disabled { opacity: 0.28; cursor: default; }
 
@@ -398,9 +413,10 @@ body {
 
 .nw-card-media {
   position: relative;
-  aspect-ratio: 3 / 4;
+  /* Elbise boydan görülür: 3/4 yerine 2/3, yani daha uzun bir çerçeve. */
+  aspect-ratio: 2 / 3;
   overflow: hidden;
-  border-radius: var(--nw-r-md);
+  border-radius: var(--nw-r-sm);
   background: var(--nw-bg-elev);
   border: 1px solid var(--nw-line);
 }
@@ -414,18 +430,22 @@ body {
 }
 .nw-card:hover .nw-card-img { transform: scale(1.04); }
 
+/* Rozet dolu bir hap değil: görselin üzerinde ince hatlı, aralıklı bir etiket.
+   Arkasındaki bulanık koyu katman her fotoğrafta okunur kalmasını sağlıyor. */
 .nw-card-badge {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 12px;
+  left: 12px;
   z-index: 2;
-  background: var(--nw-accent);
-  color: var(--nw-on-accent);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  padding: 5px 10px;
-  border-radius: var(--nw-r-pill);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--nw-accent-line);
+  color: var(--nw-accent);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  padding: 6px 11px 5px;
+  border-radius: var(--nw-r-sm);
 }
 
 .nw-card-fav {
@@ -440,25 +460,27 @@ body {
   border: 0;
   border-radius: var(--nw-r-pill);
   /* Görselin üzerinde her zaman okunur kalsın diye koyu yarı saydam zemin. */
-  background: rgba(0, 0, 0, 0.55);
+  /* Görselin üzerinde her zaman okunur kalsın diye açık, yarı saydam zemin. */
+  background: rgba(255, 255, 255, 0.82);
   backdrop-filter: blur(8px);
-  color: #fff;
+  color: var(--nw-text);
   cursor: pointer;
-  transition: all 0.18s var(--nw-ease);
+  transition: all 0.3s var(--nw-ease);
 }
-.nw-card-fav:hover { background: rgba(0, 0, 0, 0.8); }
+.nw-card-fav:hover { background: #fff; color: var(--nw-accent); }
 .nw-card-fav.is-on { color: var(--nw-accent); }
 
 .nw-card-body { padding-top: 13px; display: flex; flex-direction: column; flex: 1; }
 
 .nw-card-name {
   font-family: var(--nw-font-body);
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 12.5px;
+  font-weight: 300;
   color: var(--nw-text);
-  line-height: 1.4;
+  line-height: 1.5;
   margin: 0 0 10px;
-  letter-spacing: 0;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
   /* Uzun isimler kartları farklı yükseklikte bırakmasın. */
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -474,10 +496,15 @@ body {
   gap: 10px;
   margin-top: auto;
 }
+/* DİKKAT — fiyatlar serif DEĞİL, gövde fontunda yazılır.
+   Cormorant'ın ₺ simgesi süslü bir el yazısı biçiminde çizilmiş ve Türk
+   lirası işaretine benzemiyor (₤ gibi okunuyor). Fiyatta okunaklılık
+   estetikten önce geldiği için burada Jost kullanılıyor. */
 .nw-card-price {
-  font-family: var(--nw-font-display);
-  font-size: 16px;
-  font-weight: 700;
+  font-family: var(--nw-font-body);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
   color: var(--nw-text);
 }
 .nw-card-cart {
@@ -488,14 +515,13 @@ body {
   border-radius: var(--nw-r-pill);
   border: 1px solid var(--nw-line);
   background: transparent;
-  color: var(--nw-text-dim);
+  color: var(--nw-text-faint);
   cursor: pointer;
-  transition: all 0.18s var(--nw-ease);
+  transition: all 0.3s var(--nw-ease);
 }
 .nw-card-cart:hover {
-  background: var(--nw-accent);
   border-color: var(--nw-accent);
-  color: var(--nw-on-accent);
+  color: var(--nw-accent);
 }
 
 /* --- ŞERİT VE BAŞLIK: DAR EKRAN ----------------------------------------
@@ -654,9 +680,11 @@ body {
 }
 
 .nw-cart-price {
-  font-family: var(--nw-font-display);
-  font-size: 17px;
-  font-weight: 700;
+  /* Serif ₺ okunmadığı için burada da gövde fontu — bkz. .nw-card-price */
+  font-family: var(--nw-font-body);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
   color: var(--nw-text);
   white-space: nowrap;
 }
@@ -769,10 +797,10 @@ body {
 }
 .nw-sum-total span { font-size: 14px; color: var(--nw-text-dim); }
 .nw-sum-total strong {
-  font-family: var(--nw-font-display);
-  font-size: 25px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-family: var(--nw-font-body);
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
   color: var(--nw-text);
 }
 
@@ -839,6 +867,60 @@ body {
   .nw-cart-price { font-size: 16px; }
 }
 
+/* --- EDİTORYAL BANT -----------------------------------------------------
+   Sayfanın tek renkli momenti: çok açık gül zemin üzerinde iri, ince bir
+   serif cümle. Ürün yok, dolgu yok — yalnızca boşluk ve bir söz. */
+.nw-statement {
+  background: var(--nw-accent-soft);
+  border-top: 1px solid var(--nw-line);
+  border-bottom: 1px solid var(--nw-line);
+  padding: clamp(64px, 9vw, 130px) 0;
+  margin-top: clamp(20px, 3vw, 40px);
+}
+.nw-statement-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.nw-statement-rule {
+  width: 1px;
+  height: clamp(34px, 5vw, 56px);
+  background: var(--nw-accent-line);
+  margin-bottom: clamp(26px, 3.6vw, 40px);
+}
+.nw-statement-text {
+  font-family: var(--nw-font-display);
+  font-size: clamp(1.55rem, 3.6vw, 2.7rem);
+  font-weight: 300;
+  line-height: 1.42;
+  letter-spacing: -0.005em;
+  color: var(--nw-text);
+  margin: 0;
+  max-width: 20ch;
+}
+.nw-statement-text em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--nw-accent);
+}
+.nw-statement-link {
+  margin-top: clamp(28px, 3.8vw, 44px);
+  padding: 0 0 5px;
+  border: 0;
+  border-bottom: 1px solid var(--nw-line-strong);
+  background: none;
+  font-family: var(--nw-font-body);
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--nw-text-dim);
+  cursor: pointer;
+  transition: color 0.3s var(--nw-ease), border-color 0.3s var(--nw-ease);
+}
+.nw-statement-link:hover { color: var(--nw-accent); border-color: var(--nw-accent); }
+
 /* --- FOOTER ------------------------------------------------------------ */
 .nw-footer {
   background: var(--nw-bg-elev);
@@ -852,11 +934,13 @@ body {
   gap: clamp(24px, 4vw, 48px);
 }
 .nw-footer h4 {
-  font-family: var(--nw-font-display);
-  font-size: 14px;
-  font-weight: 600;
+  font-family: var(--nw-font-body);
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
   color: var(--nw-text);
-  margin: 0 0 16px;
+  margin: 0 0 20px;
 }
 /* Footer'daki logo ile altındaki slogan arasına nefes payı. */
 .nw-footer .nw-logo { margin-bottom: 16px; }
@@ -871,9 +955,11 @@ body {
   display: block;
   color: var(--nw-text-dim);
   text-decoration: none;
-  font-size: 13.5px;
-  line-height: 2.15;
-  transition: color 0.18s var(--nw-ease);
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  line-height: 2.3;
+  transition: color 0.3s var(--nw-ease);
 }
 .nw-footer-link:hover { color: var(--nw-accent); }
 
@@ -915,9 +1001,9 @@ body {
 }
 .nw-footer-pay { display: flex; gap: 8px; flex-wrap: wrap; }
 .nw-pay-chip {
-  /* Kart logoları beyaz zemin üzerine tasarlandığı için koyu temada
-     kendi açık zeminlerinde tutuluyor. */
+  /* Zemin de beyaz olduğu için logolar ince bir çerçeveyle ayrılıyor. */
   background: #fff;
+  border: 1px solid var(--nw-line);
   border-radius: var(--nw-r-sm);
   padding: 0 10px;
   height: 30px;
@@ -982,12 +1068,15 @@ button { font-family: var(--nw-font-body); }
    okunamayacak kadar küçülüyordu. */
 .nw-logo--inline { flex-direction: row; align-items: baseline; gap: 0.42em; }
 
+/* Navbar ve footer'daki yazı logosu, hero'daki logo görselinin küçük
+   kardeşi: aynı serif, ince ağırlık, geniş harf aralığı. Görsel yerine
+   yazıyla çizildiği için her boyutta net kalıyor. */
 .nw-logo-main {
   display: flex;
   align-items: center;
   font-family: var(--nw-font-display);
-  font-weight: 700;
-  letter-spacing: 0.01em;
+  font-weight: 400;
+  letter-spacing: 0.06em;
   white-space: nowrap;
 }
 
@@ -997,7 +1086,7 @@ button { font-family: var(--nw-font-body); }
   width: 0.66em;
   height: 0.66em;
   margin: 0 0.075em;
-  border: 0.085em solid var(--nw-accent);
+  border: 0.075em solid var(--nw-accent);
   border-radius: 50%;
   flex-shrink: 0;
   font-style: normal;
@@ -1006,7 +1095,7 @@ button { font-family: var(--nw-font-body); }
 .nw-logo-sub {
   display: flex;
   font-family: var(--nw-font-body);
-  font-weight: 600;
+  font-weight: 300;
   color: var(--nw-text-dim);
 }
 /* İstifli hâlde harfler üst satırın genişliğine tam olarak yayılır.
@@ -1098,15 +1187,17 @@ button { font-family: var(--nw-font-body); }
 }
 .nw-collection-head h1 {
   font-family: var(--nw-font-display);
-  font-size: clamp(1.9rem, 4.4vw, 2.9rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  font-weight: 300;
+  letter-spacing: -0.008em;
   margin: 0;
 }
 .nw-collection-head p {
-  margin: 9px 0 0;
+  margin: 10px 0 0;
   color: var(--nw-text-dim);
-  font-size: 14.5px;
+  font-size: 13.5px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
 }
 .nw-collection-count {
   position: absolute;

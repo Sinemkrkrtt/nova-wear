@@ -29,8 +29,8 @@ export default function Footer() {
             <Logo size="footer" layout="stack" />
             <p className="nw-footer-slogan">{BRAND.slogan}</p>
             <p className="nw-footer-about">
-              Günlük giyimde doğru kumaş ve abartısız kesim.
-              Sezon geçse de eskimeyen parçalar.
+              Davet, nişan ve özel geceler için elbiseler.
+              Kumaşın düşüşü, kesimin oturuşu, detayın sadeliği.
             </p>
           </div>
 

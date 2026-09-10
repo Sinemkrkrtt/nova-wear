@@ -11,7 +11,7 @@ export default function NewArrivals() {
   return (
     <ProductRail
       title="Yeni gelenler"
-      subtitle="Bu sezon rafa çıkan son parçalar"
+      subtitle="Sezonun rafa yeni çıkan elbiseleri"
       badge="YENİ"
       load={() => fetchNewArrivals(12)}
       onSeeAll={() => navigate('/yeni-gelenler')}

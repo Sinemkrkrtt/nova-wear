@@ -11,7 +11,7 @@ export default function PopularCollection() {
   return (
     <ProductRail
       title="Çok satanlar"
-      subtitle="En çok tercih edilen parçalar"
+      subtitle="En çok tercih edilen elbiseler"
       load={() => fetchBestSellers(12)}
       onSeeAll={() => navigate('/cok-satanlar')}
     />

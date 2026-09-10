@@ -9,13 +9,13 @@ import { db, isFirebaseConfigured } from '../config/firebase';
 // admin panelinden eklenir.
 export const DEFAULT_CATEGORIES = [
     "Yeni Sezon",
-    "Dış Giyim",
-    "Sweatshirt",
-    "Denim",
-    "Triko",
-    "Tişört",
-    "Pantolon",
-    "Gömlek",
+    "Abiye",
+    "Nişanlık",
+    "Gece",
+    "Mini",
+    "Midi",
+    "Uzun",
+    "Günlük",
 ];
 
 // Kategorileri Firestore'dan çeker. Koleksiyon boşsa varsayılanları döndürür —

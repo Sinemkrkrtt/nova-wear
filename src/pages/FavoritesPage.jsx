@@ -15,7 +15,7 @@ export default function FavoritesPage() {
   return (
     <CollectionPage
       title="Favorilerim"
-      subtitle="Beğendiğin parçalar burada birikiyor"
+      subtitle="Beğendiğin elbiseler burada birikiyor"
       fromFavorites
       empty={{
         icon,

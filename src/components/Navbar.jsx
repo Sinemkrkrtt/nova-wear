@@ -55,11 +55,13 @@ export default function Navbar() {
   // böylece palet değiştiğinde bu dosyaya dokunmak gerekmiyor.
   // Başlık fontu artık yalnızca Logo bileşeninde kullanılıyor.
   const modernFont = nw.fontBody;
+  // Menü yazıları: kalın ve sıkışık değil, ince ve geniş aralıklı — moda
+  // evlerinin gezinme çubuğu tonu.
   const sharpStyle = {
     fontFamily: modernFont,
-    fontWeight: 700,
+    fontWeight: 300,
     textTransform: 'uppercase',
-    letterSpacing: '-0.5px'
+    letterSpacing: '0.2em'
   };
   
   const brandColor = nw.accent;
@@ -224,17 +226,20 @@ export default function Navbar() {
     '&:active .MuiListItemText-primary': { color: brandColor },
   };
 
-  const promoUnit = "NOVA WEAR: TARZINLA PARLA.   •   1500 TL ÜZERİ ÜCRETSİZ KARGO   •   YENİ SEZON YAYINDA   •   ";
+  const promoUnit = "NOVA WEAR: TARZINLA PARLA.   •   1500 TL ÜZERİ ÜCRETSİZ KARGO   •   ABİYE KOLEKSİYONU YAYINDA   •   ";
   const promoSegment = promoUnit.repeat(4); // geniş ekranları da dolduracak kadar tekrar
 
   return (
     <>
       <style>
         {`
-          .nw-topbar { overflow: hidden; width: 100%; background-color: ${brandColor}; color: ${onAccent}; }
-          .nw-topbar-track { display: flex; width: max-content; animation: marquee-scroll 40s linear infinite; }
+          /* Duyuru şeridi artık dolu renkli bir bant değil: siyah zemin, altında saç
+             teli bir çizgi, geniş aralıklı küçük yazı. Sayfaya bağırmıyor, fısıldıyor. */
+          .nw-topbar { overflow: hidden; width: 100%; background-color: ${nw.bg}; color: ${textMuted};
+                       border-bottom: 1px solid ${line}; }
+          .nw-topbar-track { display: flex; width: max-content; animation: marquee-scroll 62s linear infinite; }
           .nw-topbar-track:hover { animation-play-state: paused; }
-          .nw-topbar-seg { font-family: ${modernFont}; font-weight: 600; font-size: 0.72rem; letter-spacing: 1.2px; padding: 10px 0; text-transform: uppercase; white-space: pre; }
+          .nw-topbar-seg { font-family: ${modernFont}; font-weight: 300; font-size: 0.63rem; letter-spacing: 0.34em; padding: 11px 0; text-transform: uppercase; white-space: pre; }
           @keyframes marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
         `}
       </style>
@@ -251,7 +256,7 @@ export default function Navbar() {
       <Box component="header" sx={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         px: { xs: 2, md: 5 }, py: { xs: 1, md: 1 },
-        borderBottom: `1px solid ${line}`, bgcolor: 'rgba(0,0,0,0.86)',
+        borderBottom: `1px solid ${line}`, bgcolor: 'rgba(251,248,247,0.88)',
         backdropFilter: 'blur(18px)',
         position: 'sticky', top: 0, zIndex: 1100
       }}>
@@ -281,7 +286,7 @@ export default function Navbar() {
                 key={cat} 
                 to={`/kategori/${cat}`} 
                 style={{ 
-                  textDecoration: 'none', color: textMain, ...sharpStyle, fontSize: '0.85rem', transition: 'color 0.3s' 
+                  textDecoration: 'none', color: textMain, ...sharpStyle, fontSize: '0.68rem', transition: 'color 0.3s' 
                 }}
                 onMouseOver={(e) => e.target.style.color = brandHover}
                 onMouseOut={(e) => e.target.style.color = textMain}
@@ -494,7 +499,7 @@ export default function Navbar() {
         onClose={() => { setSearchOpen(false); setSearchQuery(''); }}
         transitionDuration={400}
         PaperProps={{
-          sx: { height: '100vh', bgcolor: 'rgba(0, 0, 0, 0.97)', backdropFilter: 'blur(20px)', display: 'flex', flexDirection: 'column' }
+          sx: { height: '100vh', bgcolor: 'rgba(251, 248, 247, 0.98)', backdropFilter: 'blur(20px)', display: 'flex', flexDirection: 'column' }
         }}
       >
         <Box sx={{ p: { xs: 3, md: 5 }, display: 'flex', justifyContent: 'flex-end', position: 'absolute', top: 0, right: 0, zIndex: 10 }}>
