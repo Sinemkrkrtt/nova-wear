@@ -155,17 +155,21 @@ body {
      yumuşak bir mor ışıma ve saç teli inceliğinde bir çerçeve var. */
   /* Kutu yok: yalnızca logonun arkasında çok yumuşak bir gül ışıması.
      Açık zeminde çerçeve çizmek kutu hissi yaratıyor, zarafeti bozuyordu. */
-  /* Zeminin sayfa rengiyle AYNI olması şart: 'multiply' karışımı altında bir
-     renk bulamazsa (saydam zemin) görselin beyazı olduğu gibi basılır ve
-     logo beyaz bir kutu içinde kalırdı. */
+  /* Zemin sayfayla aynı tonda olduğunda logo arkasına yapışıyordu. Artık
+     zeminden bir ton beyaz bir yüzey: kenarlık yok (çerçeve kaba duruyor),
+     ayrım yalnızca ton farkı, yumuşak bir yükseklik gölgesi ve arkadaki gül
+     ışıması ile kuruluyor.
+     Yüzeyin beyaz olması ayrıca şart: 'multiply' karışımı altındaki rengi
+     bulamazsa görselin beyazı olduğu gibi basılırdı. */
   background:
-    radial-gradient(460px 300px at 50% 46%, var(--nw-accent-soft), transparent 70%),
-    var(--nw-bg);
+    radial-gradient(480px 320px at 50% 46%, var(--nw-accent-soft), transparent 68%),
+    #FFFFFF;
   border: 0;
-  /* Dikdörtgenin köşeleri sert duruyordu; hem yuvarlatıldı hem de aşağıdaki
-     maske ile kenarları sayfaya doğru eriyor. */
   border-radius: clamp(16px, 2.4vw, 28px);
-  box-shadow: none;
+  box-shadow:
+    0 2px 4px rgba(23, 16, 15, 0.03),
+    0 18px 50px -18px rgba(23, 16, 15, 0.14),
+    0 40px 90px -40px rgba(184, 92, 116, 0.30);
 }
 
 /* Logo görselinin zemini saf siyah olduğu için 'screen' karışımında o siyah
