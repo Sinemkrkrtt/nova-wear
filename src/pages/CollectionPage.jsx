@@ -21,31 +21,12 @@ import ProductCardSkeleton from '../components/ProductCardSkeleton';
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
-// FİLTRELEME VE SIRALAMA
+// SIRALAMA
 //
-// Hepsi tarayıcıda yapılıyor: liste zaten çekilmiş durumda, sunucuya ikinci
-// bir sorgu atmak hem yavaş hem gereksiz. Ürün sayısı binleri bulursa bu
-// mantık Firestore sorgusuna taşınmalı.
+// Tarayıcıda yapılıyor: liste zaten çekilmiş durumda, sunucuya ikinci bir
+// sorgu atmak hem yavaş hem gereksiz. Ürün sayısı binleri bulursa bu mantık
+// Firestore sorgusuna taşınmalı.
 // ---------------------------------------------------------------------------
-
-// Bedenler alfabetik değil, giyim sırasıyla dizilir: XS, S, M, L, XL...
-const SIZE_ORDER = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
-const sizeRank = (v) => {
-  const i = SIZE_ORDER.indexOf(String(v).toUpperCase());
-  if (i >= 0) return i;
-  const n = parseFloat(v);              // 36, 38, 40 gibi numaralar
-  return Number.isFinite(n) ? 100 + n : 999;
-};
-
-const variantsOf = (p) => (Array.isArray(p.variants) ? p.variants : []);
-
-// Yalnızca stoğu olan beden/renkler seçenek olarak sunulur: tükenmiş bir
-// bedeni filtreye koymak kullanıcıyı boş sonuca götürür.
-const sizesOf = (p) => variantsOf(p).filter(v => Number(v.stock) > 0).map(v => v.size).filter(Boolean);
-const colorsOf = (p) => {
-  const list = variantsOf(p).filter(v => Number(v.stock) > 0).map(v => v.color).filter(Boolean);
-  return list.length ? list : [p.color].filter(Boolean);
-};
 
 // createdAt Firestore Timestamp, Date ya da sayı olabilir; hepsini karşılar.
 const timeOf = (p) => {
@@ -126,61 +107,22 @@ export default function CollectionPage({
   // ürün anında listeden çıkar.
   const items = fromFavorites ? favorites : products;
 
-  // --- FİLTRE / SIRALAMA DURUMU ---
+  // --- SIRALAMA ---
   const [sort, setSort] = useState('onerilen');
-  const [pickedSizes, setPickedSizes] = useState([]);
-  const [pickedColors, setPickedColors] = useState([]);
 
-  // Rota değişince (başka kategoriye geçilince) seçimler sıfırlanır.
-  useEffect(() => {
-    setSort('onerilen');
-    setPickedSizes([]);
-    setPickedColors([]);
-  }, [pathname, search]);
-
-  // Seçenekler listenin kendisinden çıkarılır: elle yazılmış bir beden/renk
-  // listesi, admin yeni bir değer eklediğinde eskir.
-  const sizeOptions = useMemo(() => {
-    const set = new Set();
-    items.forEach(p => sizesOf(p).forEach(v => set.add(String(v).toUpperCase())));
-    return [...set].sort((a, b) => sizeRank(a) - sizeRank(b));
-  }, [items]);
-
-  const colorOptions = useMemo(() => {
-    const set = new Set();
-    items.forEach(p => colorsOf(p).forEach(v => set.add(String(v))));
-    return [...set].sort((a, b) => a.localeCompare(b, 'tr'));
-  }, [items]);
+  // Rota değişince (başka kategoriye geçilince) sıralama başa döner.
+  useEffect(() => { setSort('onerilen'); }, [pathname, search]);
 
   const visible = useMemo(() => {
-    let list = items;
-
-    if (pickedSizes.length) {
-      list = list.filter(p => sizesOf(p).some(v => pickedSizes.includes(String(v).toUpperCase())));
-    }
-    if (pickedColors.length) {
-      list = list.filter(p => colorsOf(p).some(v => pickedColors.includes(String(v))));
-    }
-
     // Sıralama listeyi yerinde değiştirmemeli: kopya üzerinde çalışılıyor.
     const priced = (p) => Number(p.price) || 0;
     switch (sort) {
-      case 'ucuz':   return [...list].sort((a, b) => priced(a) - priced(b));
-      case 'pahali': return [...list].sort((a, b) => priced(b) - priced(a));
-      case 'yeni':   return [...list].sort((a, b) => timeOf(b) - timeOf(a));
-      default:       return list;   // 'önerilen' = geldiği sıra
+      case 'ucuz':   return [...items].sort((a, b) => priced(a) - priced(b));
+      case 'pahali': return [...items].sort((a, b) => priced(b) - priced(a));
+      case 'yeni':   return [...items].sort((a, b) => timeOf(b) - timeOf(a));
+      default:       return items;   // 'önerilen' = geldiği sıra
     }
-  }, [items, pickedSizes, pickedColors, sort]);
-
-  const toggle = (value, picked, setPicked) =>
-    setPicked(picked.includes(value) ? picked.filter(v => v !== value) : [...picked, value]);
-
-  const filtreliMi = pickedSizes.length > 0 || pickedColors.length > 0;
-  const temizle = () => { setPickedSizes([]); setPickedColors([]); };
-
-  // Araç çubuğu tek seçenek varken gereksiz yer kaplar.
-  const araclarGorunsun = !loading && items.length > 1 &&
-    (sizeOptions.length > 1 || colorOptions.length > 1 || items.length > 3);
+  }, [items, sort]);
 
   return (
     <div className="nw-page">
@@ -196,66 +138,25 @@ export default function CollectionPage({
         <header className="nw-collection-head">
           <h1>{title}</h1>
           {subtitle && <p>{subtitle}</p>}
+          {/* Ürün sayısı ve sıralama başlığın sağ alt köşesinde: ayrı bir
+              araç çubuğu satırı açmadan, aynı hizada. */}
           {!loading && items.length > 0 && (
-            <span className="nw-collection-count">{visible.length} ürün</span>
+            <div className="nw-collection-meta">
+              <span className="nw-collection-count">{visible.length} ürün</span>
+              <label className="nw-sort">
+                <span className="nw-label">Sırala</span>
+                <select
+                  className="nw-select"
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value)}
+                  aria-label="Sıralama"
+                >
+                  {SORTS.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
+                </select>
+              </label>
+            </div>
           )}
         </header>
-
-        {araclarGorunsun && (
-          <div className="nw-tools">
-            {sizeOptions.length > 1 && (
-              <div className="nw-tool">
-                <span className="nw-label">Beden</span>
-                <div className="nw-chips">
-                  {sizeOptions.map((sz) => (
-                    <button
-                      key={sz}
-                      className={`nw-chip${pickedSizes.includes(sz) ? ' is-on' : ''}`}
-                      onClick={() => toggle(sz, pickedSizes, setPickedSizes)}
-                      aria-pressed={pickedSizes.includes(sz)}
-                    >
-                      {sz}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {colorOptions.length > 1 && (
-              <div className="nw-tool">
-                <span className="nw-label">Renk</span>
-                <div className="nw-chips">
-                  {colorOptions.map((c) => (
-                    <button
-                      key={c}
-                      className={`nw-chip${pickedColors.includes(c) ? ' is-on' : ''}`}
-                      onClick={() => toggle(c, pickedColors, setPickedColors)}
-                      aria-pressed={pickedColors.includes(c)}
-                    >
-                      {c}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="nw-tool nw-tool-sort">
-              <label className="nw-label" htmlFor="nw-sort">Sırala</label>
-              <select
-                id="nw-sort"
-                className="nw-select"
-                value={sort}
-                onChange={(e) => setSort(e.target.value)}
-              >
-                {SORTS.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
-              </select>
-            </div>
-
-            {filtreliMi && (
-              <button className="nw-tool-clear" onClick={temizle}>Filtreleri temizle</button>
-            )}
-          </div>
-        )}
 
         {loading ? (
           // İskelet kartlar: yerleşim zıplamasın ve sayfanın çalıştığı belli olsun.
@@ -264,12 +165,6 @@ export default function CollectionPage({
           </div>
         ) : items.length === 0 ? (
           <EmptyState {...empty} />
-        ) : visible.length === 0 ? (
-          /* Liste dolu ama filtre her şeyi eledi: boş sayfa yerine çıkış yolu. */
-          <div className="nw-tools-empty">
-            <p>Seçtiğin filtreye uyan ürün yok.</p>
-            <button className="nw-btn nw-btn-ghost" onClick={temizle}>Filtreleri temizle</button>
-          </div>
         ) : (
           <div className="nw-grid">
             {visible.map((p) => (

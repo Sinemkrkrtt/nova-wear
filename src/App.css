@@ -1571,43 +1571,19 @@ button { font-family: var(--nw-font-body); }
   color: var(--nw-text-faint);
 }
 
-/* --- FİLTRE VE SIRALAMA ÇUBUĞU ------------------------------------------
-   Kutu içinde bir panel değil, başlığın altında ince bir satır. Zemini yok;
-   yalnızca altındaki saç teli çizgi onu ürünlerden ayırıyor. */
-.nw-tools {
+/* --- SIRALAMA ---
+   Ayrı bir araç çubuğu satırı yok: ürün sayısı ve sıralama, başlığın sağ alt
+   köşesinde alt başlıkla aynı hizada duruyor. */
+.nw-collection-meta {
+  position: absolute;
+  right: 0;
+  bottom: clamp(26px, 3.7vw, 38px);
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: clamp(16px, 2.6vw, 34px);
-  padding: 0 0 clamp(18px, 2.4vw, 26px);
-  margin-bottom: clamp(20px, 3vw, 30px);
-  border-bottom: 1px solid var(--nw-line);
+  gap: clamp(14px, 2vw, 26px);
 }
-.nw-tool { display: flex; align-items: center; gap: 12px; min-width: 0; }
-/* Sıralama en sağa itilir: filtreler solda, sıralama karşı köşede. */
-.nw-tool-sort { margin-left: auto; }
-
-.nw-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.nw-chip {
-  min-width: 38px;
-  padding: 7px 12px 6px;
-  background: transparent;
-  border: 1px solid var(--nw-line-strong);
-  border-radius: var(--nw-r-sm);
-  font-family: var(--nw-font-body);
-  font-size: 11px;
-  font-weight: 400;
-  letter-spacing: 0.1em;
-  color: var(--nw-text-dim);
-  cursor: pointer;
-  transition: all 0.25s var(--nw-ease);
-}
-.nw-chip:hover { border-color: var(--nw-accent); color: var(--nw-accent); }
-.nw-chip.is-on {
-  background: var(--nw-accent);
-  border-color: var(--nw-accent);
-  color: var(--nw-on-accent);
-}
+.nw-collection-count { position: static; }
+.nw-sort { display: flex; align-items: center; gap: 10px; cursor: pointer; }
 
 /* Açılır liste: tarayıcının kendi oku kaldırılıp yerine ince bir ok konuyor. */
 .nw-select {
@@ -1630,38 +1606,6 @@ button { font-family: var(--nw-font-body); }
   transition: border-color 0.25s var(--nw-ease);
 }
 .nw-select:hover, .nw-select:focus { border-color: var(--nw-accent); }
-
-.nw-tool-clear {
-  padding: 0 0 3px;
-  border: 0;
-  border-bottom: 1px solid var(--nw-line-strong);
-  background: none;
-  font-family: var(--nw-font-body);
-  font-size: 10.5px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--nw-text-dim);
-  cursor: pointer;
-  transition: color 0.25s var(--nw-ease), border-color 0.25s var(--nw-ease);
-}
-.nw-tool-clear:hover { color: var(--nw-accent); border-color: var(--nw-accent); }
-
-.nw-tools-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 18px;
-  padding: clamp(40px, 6vw, 70px) 20px clamp(60px, 8vw, 100px);
-  text-align: center;
-}
-.nw-tools-empty p { margin: 0; font-size: 14px; font-weight: 300; color: var(--nw-text-dim); }
-
-@media (max-width: 700px) {
-  /* Dar ekranda sıralama kendi satırına iner, sola yaslanır. */
-  .nw-tools { gap: 14px; }
-  .nw-tool-sort { margin-left: 0; width: 100%; }
-  .nw-tool-sort .nw-select { flex: 1; }
-}
 
 /* Ürün ızgarası — ana sayfadaki şeritle aynı kart genişliğini korur. */
 .nw-grid {
@@ -1713,10 +1657,16 @@ button { font-family: var(--nw-font-body); }
 }
 .nw-empty-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
 
-@media (max-width: 560px) {
+@media (max-width: 700px) {
   /* Dar ekranda iki sütun kalsın: tek sütun kartları gereksiz büyütüyor. */
   .nw-grid { grid-template-columns: repeat(2, 1fr); }
-  .nw-collection-count { position: static; display: block; margin-top: 10px; }
+  /* Sağ üst köşede yer kalmıyor: sayı ve sıralama başlığın altına, karşılıklı. */
+  .nw-collection-meta {
+    position: static;
+    margin-top: 16px;
+    justify-content: space-between;
+    width: 100%;
+  }
 }
 
 /* --- YÜKLENİYOR İSKELETİ -------------------------------------------------
