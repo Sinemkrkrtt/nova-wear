@@ -3,6 +3,13 @@ import { collection, onSnapshot, updateDoc, doc, deleteDoc } from 'firebase/fire
 import { db } from '../../src/config/firebase';
 import BRAND from '../config/brand';
 
+// Sipariş kaydında telefon "+905551234567" biçiminde saklanır — iyzico bu
+// biçimi ister ve ödeme kaydıyla tutarlı kalması gerekir. Panelde ise
+// müşterinin yazdığı gibi gösteriliyor (5551234567): numarayı seçip
+// kopyalayınca doğrudan aramaya ya da WhatsApp'a yapıştırılabiliyor.
+// tel: bağlantısı tam numarayı korur, dokununca doğru arar.
+const yerelTelefon = (p) => String(p || '').replace(/\s+/g, '').replace(/^\+?90/, '');
+
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -161,7 +168,8 @@ const Orders = () => {
     if (searchTerm.trim()) {
       const q = searchTerm.toLocaleLowerCase('tr-TR');
       // TC Kimlik numarasını da aramaya dahil ettik (order.identityNumber)
-      const hay = `${order.orderNumber || ''} ${order.customerName || ''} ${order.phone || ''} ${order.email || ''} ${order.identityNumber || ''}`.toLocaleLowerCase('tr-TR');
+      // Telefon iki biçimde de aranabilsin: "+905551234567" ve "5551234567".
+      const hay = `${order.orderNumber || ''} ${order.customerName || ''} ${order.phone || ''} ${yerelTelefon(order.phone)} ${order.email || ''} ${order.identityNumber || ''}`.toLocaleLowerCase('tr-TR');
       if (!hay.includes(q)) return false;
     }
     return true;
@@ -281,7 +289,7 @@ const Orders = () => {
                     <div style={infoRowStyle}>
                       <span style={infoLabelStyle}>Telefon</span>
                       {order.phone
-                        ? <a href={`tel:${order.phone}`} style={infoLinkStyle}>{order.phone}</a>
+                        ? <a href={`tel:${order.phone}`} style={infoLinkStyle}>{yerelTelefon(order.phone)}</a>
                         : <span style={infoValueStyle}>—</span>}
                     </div>
 
