@@ -14,30 +14,49 @@
       content="Nova Wear — davet, nişan ve özel geceler için zarif elbiseler. Shine like a nova."
     />
 
-    <!-- WHATSAPP VE INSTAGRAM GİBİ YERLERDE PAYLAŞILINCA ÇIKACAK BİLGİLER -->
+    <!-- WHATSAPP, INSTAGRAM VE FACEBOOK'TA PAYLAŞILINCA ÇIKACAK ÖNİZLEME
+         Görsel 1200x630: bu ölçü paylaşım kartlarının standardı, kırpılmadan
+         basılır.
+
+         DİKKAT — adres göreli ("/og-image.jpg"). Facebook ve WhatsApp bunu
+         sayfanın adresine göre çözebiliyor, ama şartname tam adres istiyor.
+         Alan adı alınınca buradaki üç adresin (og:image, twitter:image ve
+         aşağıdaki ld+json) başına "https://alanadi.com" eklenmeli; ayrıca
+         og:url ve canonical eklenmeli. -->
+    <meta property="og:site_name" content="Nova Wear" />
     <meta property="og:title" content="Nova Wear | Shine like a nova" />
     <meta property="og:description" content="Nova Wear — davet, nişan ve özel geceler için zarif elbiseler. Shine like a nova." />
-    <!-- TODO(alan adı): Nova Wear alan adı belli olunca og:image ve og:url
-         gerçek adresle doldurulmalı (WhatsApp/Instagram paylaşım görseli). -->
+    <meta property="og:image" content="%PUBLIC_URL%/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Nova Wear logosu" />
+    <meta property="og:locale" content="tr_TR" />
     <meta property="og:type" content="website" />
 
-    <!-- TELEFON EKRANINA KISAYOL EKLENDİĞİNDE ÇIKACAK SİMGE -->
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/favicon.svg" />
+    <!-- X (Twitter): büyük görselli kart -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Nova Wear | Shine like a nova" />
+    <meta name="twitter:description" content="Davet, nişan ve özel geceler için zarif elbiseler." />
+    <meta name="twitter:image" content="%PUBLIC_URL%/og-image.jpg" />
+
+    <!-- TELEFON EKRANINA KISAYOL EKLENDİĞİNDE ÇIKACAK SİMGE (kare logo) -->
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/nova-icon.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     
     <title>Nova Wear | Shine like a nova</title>
 
-    <!-- TODO(alan adı): kanonik adres, site yayına alınınca eklenecek. -->
+    <!-- TODO(alan adı): kanonik adres, alan adı alınınca eklenecek. -->
 
-    <!-- GOOGLE İÇİN MARKA BİLGİSİ (ad + logo)
-         TODO(alan adı): url / logo / sameAs alanları gerçek adreslerle doldurulmalı. -->
+    <!-- GOOGLE İÇİN MARKA BİLGİSİ (ad + logo) -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "Organization",
         "name": "Nova Wear",
         "slogan": "Shine like a nova.",
-        "description": "Nova Wear — günlük giyimde doğru kumaş, abartısız kesim."
+        "description": "Nova Wear — davet, nişan ve özel geceler için zarif elbiseler.",
+        "logo": "%PUBLIC_URL%/nova-icon.png",
+        "image": "%PUBLIC_URL%/og-image.jpg"
       }
     </script>
   </head>

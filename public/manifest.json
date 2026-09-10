@@ -1,11 +1,17 @@
 {
   "short_name": "Nova Wear",
-  "name": "Nova Wear | Günlük Giyim",
+  "name": "Nova Wear | Abiye ve Özel Gün Elbiseleri",
   "icons": [
     {
       "src": "favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml"
+    },
+    {
+      "src": "nova-icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
   "start_url": ".",
