@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  TODO(alan adı): Aşağıdaki ALAN-ADINIZ ifadesini gerçek adresle değiştirin.
-  Bu dosya daha önce Lavia Butik'in adreslerini listeliyordu; Nova Wear'ın
-  rotalarıyla yeniden yazıldı.
+  Adresler Vercel'in verdiği alan adına göre yazıldı. Kendi alan adını
+  aldığında buradaki ve robots.txt'deki adresleri değiştir.
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://ALAN-ADINIZ/</loc><priority>1.0</priority></url>
-  <url><loc>https://ALAN-ADINIZ/yeni-gelenler</loc><priority>0.9</priority></url>
-  <url><loc>https://ALAN-ADINIZ/cok-satanlar</loc><priority>0.9</priority></url>
-  <url><loc>https://ALAN-ADINIZ/sikca-sorulan-sorular</loc><priority>0.5</priority></url>
-  <url><loc>https://ALAN-ADINIZ/kargo-takip</loc><priority>0.5</priority></url>
-  <url><loc>https://ALAN-ADINIZ/iade-degisim</loc><priority>0.4</priority></url>
-  <url><loc>https://ALAN-ADINIZ/mesafeli-satis-sozlesmesi</loc><priority>0.3</priority></url>
-  <url><loc>https://ALAN-ADINIZ/on-bilgilendirme-formu</loc><priority>0.3</priority></url>
-  <url><loc>https://ALAN-ADINIZ/kvkk</loc><priority>0.3</priority></url>
-  <url><loc>https://ALAN-ADINIZ/gizlilik-politikasi</loc><priority>0.3</priority></url>
+  <url><loc>https://novawear-sage.vercel.app/</loc><priority>1.0</priority></url>
+  <url><loc>https://novawear-sage.vercel.app/yeni-gelenler</loc><priority>0.9</priority></url>
+  <url><loc>https://novawear-sage.vercel.app/cok-satanlar</loc><priority>0.9</priority></url>
+  <url><loc>https://novawear-sage.vercel.app/sikca-sorulan-sorular</loc><priority>0.5</priority></url>
+  <url><loc>https://novawear-sage.vercel.app/kargo-takip</loc><priority>0.5</priority></url>
+  <url><loc>https://novawear-sage.vercel.app/iade-degisim</loc><priority>0.4</priority></url>
+  <url><loc>https://novawear-sage.vercel.app/mesafeli-satis-sozlesmesi</loc><priority>0.3</priority></url>
+  <url><loc>https://novawear-sage.vercel.app/on-bilgilendirme-formu</loc><priority>0.3</priority></url>
+  <url><loc>https://novawear-sage.vercel.app/kvkk</loc><priority>0.3</priority></url>
+  <url><loc>https://novawear-sage.vercel.app/gizlilik-politikasi</loc><priority>0.3</priority></url>
 </urlset>
