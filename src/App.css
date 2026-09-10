@@ -449,6 +449,17 @@ body {
 }
 .nw-card:hover .nw-card-img { transform: scale(1.04); }
 
+/* İkinci görsel birincinin tam üstünde durur, normalde görünmez.
+   Dokunmatik cihazlarda 'hover' olmadığı için hiç devreye girmez —
+   orada da zaten ürüne dokunulup detay sayfası açılıyor. */
+.nw-card-img-alt {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.55s var(--nw-ease), transform 0.6s var(--nw-ease);
+}
+.nw-card:hover .nw-card-img-alt { opacity: 1; }
+
 /* Rozet dolu bir hap değil: görselin üzerinde ince hatlı, aralıklı bir etiket.
    Arkasındaki bulanık koyu katman her fotoğrafta okunur kalmasını sağlıyor. */
 .nw-card-badge {
@@ -886,6 +897,331 @@ body {
   .nw-cart-price { font-size: 16px; }
 }
 
+/* --- ÜRÜN DETAY SAYFASI --------------------------------------------------
+   İki sütun: solda görseller, sağda bilgiler. Sağ sütun masaüstünde yapışkan
+   kalır, böylece uzun görsellerde bile beden seçimi ve sepet düğmesi ekranda
+   durur. */
+.nw-pd {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(24px, 4vw, 64px);
+  align-items: start;
+  padding: clamp(18px, 2.6vw, 30px) 0 clamp(50px, 7vw, 90px);
+}
+
+/* --- GÖRSELLER --- */
+.nw-pd-gallery {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 14px;
+}
+/* Tek görselli üründe küçük görsel şeridi hiç basılmıyor. */
+.nw-pd-gallery:has(.nw-pd-stage:only-child) { grid-template-columns: minmax(0, 1fr); }
+
+.nw-pd-thumbs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.nw-pd-thumbs::-webkit-scrollbar { display: none; }
+
+.nw-pd-thumb {
+  flex-shrink: 0;
+  width: 76px;
+  aspect-ratio: 3 / 4;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--nw-bg-elev);
+  border: 1px solid var(--nw-line);
+  border-radius: var(--nw-r-sm);
+  opacity: 0.75;
+  transition: opacity 0.3s var(--nw-ease), border-color 0.3s var(--nw-ease);
+}
+.nw-pd-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+.nw-pd-thumb:hover { opacity: 1; }
+.nw-pd-thumb.is-on { opacity: 1; border-color: var(--nw-accent); }
+
+.nw-pd-stage {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--nw-bg-elev);
+  border: 1px solid var(--nw-line);
+  border-radius: var(--nw-r-sm);
+}
+.nw-pd-stage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+.nw-pd-stage img.is-gone { filter: grayscale(45%); opacity: 0.85; }
+
+.nw-pd-flag {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  padding: 6px 12px 5px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(192, 57, 43, 0.3);
+  border-radius: var(--nw-r-sm);
+  color: var(--nw-danger);
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+/* Oklar görselin üstünde durur ama üzerine binmez: yarı saydam, ince. */
+.nw-pd-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--nw-r-pill);
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(8px);
+  color: var(--nw-text);
+  cursor: pointer;
+  transition: background 0.3s var(--nw-ease), color 0.3s var(--nw-ease);
+}
+.nw-pd-nav:hover { background: #fff; color: var(--nw-accent); }
+.nw-pd-prev { left: 12px; }
+.nw-pd-next { right: 12px; }
+
+.nw-pd-count {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 2;
+  padding: 5px 10px 4px;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(8px);
+  border-radius: var(--nw-r-sm);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  color: var(--nw-text-dim);
+}
+
+/* --- BİLGİ SÜTUNU --- */
+.nw-pd-info {
+  position: sticky;
+  top: 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Ortak küçük etiket: kategori, "Beden", form başlıkları. */
+.nw-label {
+  display: block;
+  font-family: var(--nw-font-body);
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--nw-text-faint);
+}
+
+.nw-pd-name {
+  font-family: var(--nw-font-display);
+  font-size: clamp(1.9rem, 3.6vw, 2.9rem);
+  font-weight: 300;
+  line-height: 1.15;
+  letter-spacing: -0.008em;
+  color: var(--nw-text);
+  margin: 14px 0 0;
+}
+
+.nw-pd-price {
+  margin-top: 14px;
+  font-family: var(--nw-font-body);
+  font-size: 19px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: var(--nw-text);
+}
+.nw-pd-price.is-gone { color: var(--nw-text-faint); text-decoration: line-through; }
+
+.nw-pd-sizes {
+  width: 100%;
+  margin-top: clamp(26px, 3.4vw, 38px);
+  padding-top: clamp(22px, 3vw, 32px);
+  border-top: 1px solid var(--nw-line);
+}
+.nw-pd-size-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+/* Beden düğmeleri: dolu kutular değil, ince hatlı kareler. Seçili olan
+   zeminini vurgu rengine bırakır. */
+.nw-pd-size {
+  min-width: 54px;
+  height: 46px;
+  padding: 0 14px;
+  background: transparent;
+  border: 1px solid var(--nw-line-strong);
+  border-radius: var(--nw-r-sm);
+  font-family: var(--nw-font-body);
+  font-size: 12.5px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  color: var(--nw-text);
+  cursor: pointer;
+  transition: all 0.25s var(--nw-ease);
+}
+.nw-pd-size:hover:not(:disabled) { border-color: var(--nw-accent); color: var(--nw-accent); }
+.nw-pd-size.is-on {
+  background: var(--nw-accent);
+  border-color: var(--nw-accent);
+  color: var(--nw-on-accent);
+}
+/* Tükenen beden gizlenmiyor, üstü çiziliyor: hangi bedenlerin var olduğu
+   bilgisi de müşteri için değerli. */
+.nw-pd-size:disabled {
+  color: var(--nw-text-faint);
+  border-color: var(--nw-line);
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+.nw-pd-note { margin: 12px 0 0; font-size: 12.5px; color: var(--nw-accent); }
+.nw-pd-note.is-hint { color: var(--nw-text-faint); }
+
+.nw-pd-buy {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: clamp(22px, 3vw, 30px);
+}
+.nw-qty.is-locked { opacity: 0.45; pointer-events: none; }
+.nw-pd-buy .nw-qty button { width: 44px; height: 46px; border-radius: var(--nw-r-pill); }
+.nw-pd-buy .nw-qty span { min-width: 30px; font-size: 14px; }
+
+.nw-pd-fav {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: 1px solid var(--nw-line-strong);
+  border-radius: var(--nw-r-pill);
+  color: var(--nw-text-dim);
+  cursor: pointer;
+  transition: all 0.3s var(--nw-ease);
+}
+.nw-pd-fav:hover { border-color: var(--nw-accent); color: var(--nw-accent); }
+.nw-pd-fav.is-on { color: var(--nw-accent); border-color: var(--nw-accent); }
+
+.nw-pd-cta { width: 100%; margin-top: 14px; padding: 18px 24px; }
+
+/* --- AÇILIR BÖLÜMLER ---
+   MUI akordeonu yerine tarayıcının kendi <details> öğesi: aynı davranış,
+   ek paket yok, klavye ve ekran okuyucu desteği hazır. */
+.nw-acc { width: 100%; margin-top: clamp(30px, 4vw, 44px); border-top: 1px solid var(--nw-line); }
+.nw-acc details { border-bottom: 1px solid var(--nw-line); }
+.nw-acc summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 18px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--nw-font-body);
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--nw-text);
+}
+.nw-acc summary::-webkit-details-marker { display: none; }
+/* Artı işareti açıkken eksiye dönüşür — ok döndürmekten daha sakin. */
+.nw-acc summary::after {
+  content: "+";
+  font-size: 15px;
+  line-height: 1;
+  color: var(--nw-text-faint);
+  transition: transform 0.3s var(--nw-ease);
+}
+.nw-acc details[open] summary::after { content: "–"; }
+.nw-acc p {
+  margin: 0 0 20px;
+  font-size: 13.5px;
+  font-weight: 300;
+  line-height: 1.85;
+  color: var(--nw-text-dim);
+}
+
+.nw-pd-more { border-top: 1px solid var(--nw-line); }
+
+/* --- YÜKLENİYOR İSKELETİ --- */
+.nw-pd-skel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(24px, 4vw, 64px);
+  padding: clamp(30px, 4vw, 50px) 0 90px;
+}
+.nw-pd-skel-img { aspect-ratio: 3 / 4; border-radius: var(--nw-r-sm); }
+.nw-pd-skel-info { display: flex; flex-direction: column; gap: 14px; padding-top: 10px; }
+
+/* --- SEPETE EKLENDİ BİLDİRİMİ --- */
+.nw-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  z-index: 1300;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 20px;
+  background: var(--nw-text);
+  color: var(--nw-bg);
+  border-radius: var(--nw-r-sm);
+  box-shadow: var(--nw-shadow-lg);
+  font-size: 13px;
+  font-weight: 300;
+  /* Kapalıyken tıklamayı engellememesi için görünmez VE etkisiz. */
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 12px);
+  transition: opacity 0.3s var(--nw-ease), transform 0.3s var(--nw-ease), visibility 0.3s;
+}
+.nw-toast.is-on { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+.nw-toast button {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--nw-accent-hover);
+  font-family: var(--nw-font-body);
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .nw-pd, .nw-pd-skel { grid-template-columns: 1fr; gap: 26px; }
+  .nw-pd-info { position: static; }
+  /* Küçük görseller dar ekranda görselin altında yatay şerit olur. */
+  .nw-pd-gallery { grid-template-columns: 1fr; }
+  .nw-pd-thumbs { flex-direction: row; order: 2; overflow-x: auto; }
+  .nw-pd-stage { order: 1; }
+  .nw-pd-thumb { width: 64px; }
+  .nw-toast { left: 16px; right: 16px; bottom: 16px; transform: translateY(12px); justify-content: space-between; }
+  .nw-toast.is-on { transform: translateY(0); }
+}
+
 /* --- EDİTORYAL BANT -----------------------------------------------------
    Sayfanın tek renkli momenti: çok açık gül zemin üzerinde iri, ince bir
    serif cümle. Ürün yok, dolgu yok — yalnızca boşluk ve bir söz. */
@@ -1233,6 +1569,98 @@ button { font-family: var(--nw-font-body); }
   bottom: clamp(26px, 3.7vw, 38px);
   font-size: 12.5px;
   color: var(--nw-text-faint);
+}
+
+/* --- FİLTRE VE SIRALAMA ÇUBUĞU ------------------------------------------
+   Kutu içinde bir panel değil, başlığın altında ince bir satır. Zemini yok;
+   yalnızca altındaki saç teli çizgi onu ürünlerden ayırıyor. */
+.nw-tools {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: clamp(16px, 2.6vw, 34px);
+  padding: 0 0 clamp(18px, 2.4vw, 26px);
+  margin-bottom: clamp(20px, 3vw, 30px);
+  border-bottom: 1px solid var(--nw-line);
+}
+.nw-tool { display: flex; align-items: center; gap: 12px; min-width: 0; }
+/* Sıralama en sağa itilir: filtreler solda, sıralama karşı köşede. */
+.nw-tool-sort { margin-left: auto; }
+
+.nw-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.nw-chip {
+  min-width: 38px;
+  padding: 7px 12px 6px;
+  background: transparent;
+  border: 1px solid var(--nw-line-strong);
+  border-radius: var(--nw-r-sm);
+  font-family: var(--nw-font-body);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: var(--nw-text-dim);
+  cursor: pointer;
+  transition: all 0.25s var(--nw-ease);
+}
+.nw-chip:hover { border-color: var(--nw-accent); color: var(--nw-accent); }
+.nw-chip.is-on {
+  background: var(--nw-accent);
+  border-color: var(--nw-accent);
+  color: var(--nw-on-accent);
+}
+
+/* Açılır liste: tarayıcının kendi oku kaldırılıp yerine ince bir ok konuyor. */
+.nw-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 7px 30px 6px 10px;
+  background-color: transparent;
+  background-image:
+    url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%239C908F' stroke-width='1.3' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  border: 1px solid var(--nw-line-strong);
+  border-radius: var(--nw-r-sm);
+  font-family: var(--nw-font-body);
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--nw-text);
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.25s var(--nw-ease);
+}
+.nw-select:hover, .nw-select:focus { border-color: var(--nw-accent); }
+
+.nw-tool-clear {
+  padding: 0 0 3px;
+  border: 0;
+  border-bottom: 1px solid var(--nw-line-strong);
+  background: none;
+  font-family: var(--nw-font-body);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--nw-text-dim);
+  cursor: pointer;
+  transition: color 0.25s var(--nw-ease), border-color 0.25s var(--nw-ease);
+}
+.nw-tool-clear:hover { color: var(--nw-accent); border-color: var(--nw-accent); }
+
+.nw-tools-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: clamp(40px, 6vw, 70px) 20px clamp(60px, 8vw, 100px);
+  text-align: center;
+}
+.nw-tools-empty p { margin: 0; font-size: 14px; font-weight: 300; color: var(--nw-text-dim); }
+
+@media (max-width: 700px) {
+  /* Dar ekranda sıralama kendi satırına iner, sola yaslanır. */
+  .nw-tools { gap: 14px; }
+  .nw-tool-sort { margin-left: 0; width: 100%; }
+  .nw-tool-sort .nw-select { flex: 1; }
 }
 
 /* Ürün ızgarası — ana sayfadaki şeritle aynı kart genişliğini korur. */

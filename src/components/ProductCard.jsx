@@ -22,6 +22,9 @@ export default function ProductCard({ product, badge, favorites, onFavoritesChan
   const navigate = useNavigate();
 
   const image = product.images?.[0] || product.imageUrl;
+  // İkinci görsel varsa fareyle üzerine gelince yumuşakça ona geçilir —
+  // elbisede arkadan/detay görünümü satın alma kararının yarısı.
+  const hoverImage = product.images?.[1];
   const color =
     product.color ||
     (product.variants?.length ? product.variants[0].color : null);
@@ -81,6 +84,17 @@ export default function ProductCard({ product, badge, favorites, onFavoritesChan
         </button>
 
         <img className="nw-card-img" src={imageUrl(image, 500)} alt={product.name} loading="lazy" onError={imageFallback} />
+
+        {hoverImage && (
+          <img
+            className="nw-card-img nw-card-img-alt"
+            src={imageUrl(hoverImage, 500)}
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            onError={imageFallback}
+          />
+        )}
       </div>
 
       <div className="nw-card-body">
