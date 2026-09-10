@@ -1577,7 +1577,9 @@ button { font-family: var(--nw-font-body); }
 .nw-collection-meta {
   position: absolute;
   right: 0;
-  bottom: clamp(26px, 3.7vw, 38px);
+  /* Alt başlık hizasında değil, başlığın ilk satırıyla aynı yükseklikte:
+     sayı ve sıralama, ayracın sağ üst köşesinde duruyor. */
+  top: clamp(18px, 2.6vw, 26px);
   display: flex;
   align-items: center;
   gap: clamp(14px, 2vw, 26px);
