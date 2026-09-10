@@ -889,7 +889,7 @@ body {
   background: var(--nw-accent-soft);
   border-top: 1px solid var(--nw-line);
   border-bottom: 1px solid var(--nw-line);
-  padding: clamp(42px, 5vw, 72px) 0;
+  padding: clamp(28px, 3.2vw, 46px) 0;
   margin-top: clamp(16px, 2.4vw, 32px);
 }
 .nw-statement-inner {
@@ -900,9 +900,9 @@ body {
 }
 .nw-statement-rule {
   width: 1px;
-  height: clamp(22px, 2.8vw, 32px);
+  height: clamp(14px, 1.8vw, 20px);
   background: var(--nw-accent-line);
-  margin-bottom: clamp(16px, 2.2vw, 24px);
+  margin-bottom: clamp(10px, 1.4vw, 15px);
 }
 .nw-statement-text {
   font-family: var(--nw-font-display);
@@ -920,7 +920,7 @@ body {
   color: var(--nw-accent);
 }
 .nw-statement-sub {
-  margin-top: 13px;
+  margin-top: 10px;
   font-family: var(--nw-font-body);
   font-size: 10.5px;
   font-weight: 400;
@@ -929,7 +929,7 @@ body {
   color: var(--nw-text-faint);
 }
 .nw-statement-link {
-  margin-top: clamp(18px, 2.2vw, 26px);
+  margin-top: clamp(13px, 1.6vw, 18px);
   padding: 0 0 5px;
   border: 0;
   border-bottom: 1px solid var(--nw-line-strong);
