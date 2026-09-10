@@ -226,7 +226,7 @@ export default function Navbar() {
     '&:active .MuiListItemText-primary': { color: brandColor },
   };
 
-  const promoUnit = "NOVA WEAR: TARZINLA PARLA.   •   1500 TL ÜZERİ ÜCRETSİZ KARGO   •   ABİYE KOLEKSİYONU YAYINDA   •   ";
+  const promoUnit = "SHINE LIKE A NOVA   •   1500 TL ÜZERİ ÜCRETSİZ KARGO   •   ABİYE KOLEKSİYONU YAYINDA   •   ";
   const promoSegment = promoUnit.repeat(4); // geniş ekranları da dolduracak kadar tekrar
 
   return (

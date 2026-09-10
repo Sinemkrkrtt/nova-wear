@@ -15,7 +15,7 @@
 export const BRAND = {
   // --- Görünen marka kimliği ---
   name: 'Nova Wear',
-  slogan: 'Tarzınla parla.',
+  slogan: 'Shine like a nova.',
   description: 'Özel günler için zarif elbiseler.',
 
   // --- İletişim (DOLDURULACAK) ---

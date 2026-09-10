@@ -136,7 +136,7 @@ export default function Hero() {
             {heroImg ? (
               <img src={imageUrl(heroImg, 1200)} alt="Nova Wear yeni sezon koleksiyonu" onError={imageFallback} />
             ) : (
-              <img src={heroLogo} alt="Nova Wear — Tarzınla parla" />
+              <img src={heroLogo} alt="Nova Wear — Shine like a nova" />
             )}
           </div>
         </div>

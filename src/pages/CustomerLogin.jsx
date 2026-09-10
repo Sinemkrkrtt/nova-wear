@@ -12,6 +12,7 @@ import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../../src/config/firebase';
 import Logo from '../components/Logo';
 import BRAND from '../config/brand';
+import heroLogo from '../assets/hero-logo.png';
 
 // --- GÜVENLİK: Giriş deneme sınırı / kilitleme ---
 const MAX_ATTEMPTS = 6;                 // İzin verilen ardışık hatalı giriş
@@ -208,28 +209,30 @@ export default function CustomerLogin() {
         <Grid container sx={{ minHeight: '100vh', bgcolor: 'var(--nw-surface)', fontFamily: brandFont }}>
             
             {/* SOL TARAF: MARKA PANELİ (Mobilde Gizli)
-                Daha önce burada bir stok fotoğraf vardı; markanın kendi
-                görsel dili oluştuğu için logo panelıne çevrildi. */}
+                Zemin saf beyaz — logo görselinin kendi zemini de beyaz olduğu
+                için ikisi birleşiyor, logo bir kutunun içinde durmuyor. */}
             <Grid size={{ xs: 12, md: 5, lg: 6 }} sx={{
                 display: { xs: 'none', md: 'flex' },
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: 3,
+                gap: 2,
                 p: { md: 6, lg: 8 },
-                background:
-                    'radial-gradient(620px 380px at 60% 30%, var(--nw-accent-soft), transparent 66%),' +
-                    'linear-gradient(160deg, #22222A 0%, #17171C 100%)',
+                bgcolor: '#FFFFFF',
                 borderRight: '1px solid var(--nw-line)',
             }}>
-                <Logo size="hero" layout="stack" />
+                <Box
+                    component="img"
+                    src={heroLogo}
+                    alt={`${BRAND.name} — ${BRAND.slogan}`}
+                    sx={{ width: '100%', maxWidth: 480, display: 'block' }}
+                />
 
                 <Typography sx={{
-                    fontFamily: 'var(--nw-font-body)', color: 'var(--nw-text-dim)', fontSize: '1.02rem',
-                    lineHeight: 1.7, textAlign: 'center', maxWidth: 380, mt: 1
+                    fontFamily: 'var(--nw-font-body)', color: 'var(--nw-text-dim)', fontSize: '0.95rem',
+                    fontWeight: 300, lineHeight: 1.8, textAlign: 'center', maxWidth: 360,
                 }}>
-                    {BRAND.name} ile tarzını konuştur. Yeni sezon parçalarını ilk sen gör,
-                    siparişlerini tek yerden takip et.
+                    Yeni sezon elbiseleri ilk sen gör, siparişlerini tek yerden takip et.
                 </Typography>
             </Grid>
 

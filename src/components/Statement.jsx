@@ -9,7 +9,8 @@ import { useNavigate } from 'react-router-dom';
 // hissettirmek. Moda kataloglarında iki ürün sayfasının arasına konan boş
 // sayfa gibi — orada satış yapılmaz, hava kurulur.
 //
-// Bu yüzden içinde tek bir cümle, ince bir ayraç ve tek bir çıkış var.
+// İçeriği markanın sloganı: uzun bir cümle yerine tek bir söz, altında
+// koleksiyonun kapsamı ve tek bir çıkış.
 // ---------------------------------------------------------------------------
 
 export default function Statement() {
@@ -21,9 +22,10 @@ export default function Statement() {
         <span className="nw-statement-rule" aria-hidden="true" />
 
         <p className="nw-statement-text">
-          Bir elbise yalnızca giyilmez;<br />
-          <em>hatırlanacak</em> bir akşamın parçası olur.
+          Shine like a <em>nova</em>.
         </p>
+
+        <span className="nw-statement-sub">Abiye · Nişanlık · Davet</span>
 
         <button className="nw-statement-link" onClick={() => navigate('/yeni-gelenler')}>
           Koleksiyona göz at

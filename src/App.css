@@ -162,7 +162,9 @@ body {
     radial-gradient(460px 300px at 50% 46%, var(--nw-accent-soft), transparent 70%),
     var(--nw-bg);
   border: 0;
-  border-radius: 0;
+  /* Dikdörtgenin köşeleri sert duruyordu; hem yuvarlatıldı hem de aşağıdaki
+     maske ile kenarları sayfaya doğru eriyor. */
+  border-radius: clamp(16px, 2.4vw, 28px);
   box-shadow: none;
 }
 
@@ -208,8 +210,21 @@ body {
 }
 
 /* Logo görselinin zemini saf beyaz; 'multiply' ile o beyaz tamamen kaybolur.
-   Böylece logo bir kutunun içinde değil, doğrudan sayfanın üzerinde durur. */
-.nw-hero-media.is-logo img { mix-blend-mode: multiply; }
+   Böylece logo bir kutunun içinde değil, doğrudan sayfanın üzerinde durur.
+   Maske, görselin dikdörtgen sınırını kenarlara doğru silikleştiriyor —
+   ışıma keskin bir kenarla kesilmiyor. */
+.nw-hero-media.is-logo img {
+  mix-blend-mode: multiply;
+  -webkit-mask-image: radial-gradient(115% 115% at 50% 50%, #000 58%, transparent 100%);
+          mask-image: radial-gradient(115% 115% at 50% 50%, #000 58%, transparent 100%);
+}
+
+/* Işık huzmesi de aynı yumuşamayı almalı, yoksa köşelerde keskin bir
+   dikdörtgen olarak görünüyor. */
+.nw-hero-media.is-logo::after {
+  -webkit-mask-image: radial-gradient(110% 110% at 50% 50%, #000 52%, transparent 100%);
+          mask-image: radial-gradient(110% 110% at 50% 50%, #000 52%, transparent 100%);
+}
 
 .nw-hero-media img {
   width: 100%;
@@ -904,8 +919,17 @@ body {
   font-weight: 400;
   color: var(--nw-accent);
 }
+.nw-statement-sub {
+  margin-top: 18px;
+  font-family: var(--nw-font-body);
+  font-size: 10.5px;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--nw-text-faint);
+}
 .nw-statement-link {
-  margin-top: clamp(28px, 3.8vw, 44px);
+  margin-top: clamp(26px, 3.4vw, 40px);
   padding: 0 0 5px;
   border: 0;
   border-bottom: 1px solid var(--nw-line-strong);
