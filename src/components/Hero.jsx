@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchBanners, fetchHeroImage } from '../utils/catalog';
-import heroLogo from '../assets/hero-logo.png';
+import heroBanner from '../assets/hero-banner.jpg';
 import { imageUrl, imageFallback } from '../utils/storage';
 
 export default function Hero() {
@@ -101,46 +101,16 @@ export default function Hero() {
   }
 
   // --- BANNER YOKSA: STATİK HERO ---
+  // Metin bloğu ve logo paneli kaldırıldı: sayfa, tam genişlikte tek bir
+  // görselle açılıyor. Admin panelinden (settings/hero) bir görsel
+  // yüklendiğinde onun yerini o alır.
   return (
-    <section className="nw-hero">
-      <div className="nw-wrap">
-        <div className="nw-hero-inner">
-          <div>
-            <div className="nw-eyebrow">Abiye &amp; Davet — 2026</div>
-
-            <h1>
-              Gecenin<br />
-              <em>en zarif</em> hali
-            </h1>
-
-            <p>
-              Davet, nişan ve özel geceler için elbiseler. Kumaşın düşüşü,
-              kesimin oturuşu ve detayın sadeliği üzerine kurulu.
-            </p>
-
-            <div className="nw-hero-actions">
-              <button className="nw-btn nw-btn-primary" onClick={() => navigate('/cok-satanlar')}>
-                Koleksiyonu keşfet
-              </button>
-              <button className="nw-btn nw-btn-ghost" onClick={() => navigate('/yeni-gelenler')}>
-                Yeni gelenler
-              </button>
-            </div>
-          </div>
-
-          {/* Admin panelinden (settings/hero) bir görsel yüklendiyse o gösterilir;
-              yüklenene kadar markanın logo görseli duruyor.
-              Logo kare; kutu ise geniş. object-fit:cover ile üstteki/alttaki
-              boş pay kırpılıyor, yazı tam ortada kalıyor. */}
-          <div className={`nw-hero-media${heroImg ? '' : ' is-logo'}`}>
-            {heroImg ? (
-              <img src={imageUrl(heroImg, 1200)} alt="Nova Wear yeni sezon koleksiyonu" onError={imageFallback} />
-            ) : (
-              <img src={heroLogo} alt="Nova Wear — Shine like a nova" />
-            )}
-          </div>
-        </div>
-      </div>
+    <section className="nw-hero-banner">
+      <img
+        src={heroImg ? imageUrl(heroImg, 1600) : heroBanner}
+        alt="Nova Wear yeni sezon koleksiyonu"
+        onError={imageFallback}
+      />
     </section>
   );
 }

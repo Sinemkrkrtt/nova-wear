@@ -237,6 +237,33 @@ body {
   display: block;
 }
 
+/* --- TAM GENİŞLİK AÇILIŞ GÖRSELİ -----------------------------------------
+   Sayfa, kenar boşluğu olmayan tek bir görselle açılıyor. Oran ekrana göre
+   değişiyor: geniş ekranda yatay bir bant, telefonda dikeye yakın — böylece
+   her iki durumda da yüz ve eller kadrajda kalıyor. */
+.nw-hero-banner {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  /* Geniş ekranda 16/9 tüm ekranı kaplayabiliyor; altında ürün olduğu
+     belli olsun diye yükseklik ekranın dörtte üçüyle sınırlı. */
+  max-height: 76vh;
+  overflow: hidden;
+  background: var(--nw-surface-2);
+  border-bottom: 1px solid var(--nw-line);
+}
+.nw-hero-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .nw-hero-banner { aspect-ratio: 4 / 5; }
+}
+
 /* --- BUTONLAR ---------------------------------------------------------- */
 /* Butonlar artık hap değil: dik köşeli, geniş harf aralıklı, küçük puntolu.
    Zıplama efekti kaldırıldı — sakin geçişler daha pahalı duruyor. */
@@ -1530,6 +1557,19 @@ button { font-family: var(--nw-font-body); }
 
 /* Admin giriş ekranındaki logo: hero boyu fazla büyük kalıyor. */
 .nw-admin-logo { font-size: 46px; margin-bottom: 18px; }
+
+/* Başlıktaki logo: yazıyla çizilen logotype yerine logo görselinin sıkı
+   kırpılmış hâli. Zemini beyaz olduğu için 'multiply' ile başlığın zeminine
+   karışıyor, kutu görünmüyor. */
+.nw-nav-logo {
+  display: block;
+  height: 42px;
+  width: auto;
+  mix-blend-mode: multiply;
+}
+@media (max-width: 900px) {
+  .nw-nav-logo { height: 32px; }
+}
 
 /* --- KOLEKSİYON SAYFASI (Yeni gelenler / Çok satanlar) ------------------ */
 .nw-crumbs {

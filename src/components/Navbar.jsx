@@ -17,6 +17,7 @@ import { nw } from '../theme/muiTheme';
 import BRAND from '../config/brand';
 import { imageUrl, imageFallback } from '../utils/storage';
 import Logo from './Logo';
+import logoMark from '../assets/logo-mark.png';
 
 // Türkçe / aksan duyarsız arama için normalize (Arama sayfası ile aynı davranış)
 const normalizeText = (s) => String(s || '')
@@ -274,7 +275,7 @@ export default function Navbar() {
             <Box component="img" .../> ile değiştirilebilir. */}
         <Box sx={{ flex: isMobile ? 1 : 'none', display: 'flex', justifyContent: isMobile ? 'center' : 'flex-start' }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', padding: '10px 4px', margin: '-10px -4px' }}>
-            <Logo size="nav" />
+            <img src={logoMark} alt="Nova Wear" className="nw-nav-logo" />
           </Link>
         </Box>
 
