@@ -244,10 +244,12 @@ body {
 .nw-hero-banner {
   display: block;
   width: 100%;
-  aspect-ratio: 21 / 9;
-  /* Yükseklik ekranın yarısını biraz geçiyor: altındaki ürünler ilk bakışta
-     görünsün diye görsel sayfayı kaplamıyor. */
-  max-height: 54vh;
+  /* Görselin kendi oranı (1584x672). Böylece geniş ekranda kompozisyon
+     kırpılmadan, iki yana açılan tüller de dahil olmak üzere tam görünüyor.
+     Yükseklik yine de ekranın %60'ıyla sınırlı: çok yüksek ekranlarda
+     sayfayı kaplamasın. */
+  aspect-ratio: 33 / 14;
+  max-height: 60vh;
   overflow: hidden;
   background: var(--nw-surface-2);
   border-bottom: 1px solid var(--nw-line);
@@ -256,15 +258,18 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Dikeyde ortadan değil, biraz aşağıdan kırpılıyor: bant kısaldıkça
-     kaybedilen kısım tülün üst tarafı oluyor, gözler ve dudaklar kadrajda
-     kalıyor. */
-  object-position: center 62%;
+  /* Kırpma gerektiğinde ortadan değil biraz aşağıdan: üstteki boş zemin
+     gidiyor, yüz ve dudaklar kadrajda kalıyor. */
+  object-position: center 60%;
   display: block;
 }
 
 @media (max-width: 900px) {
-  .nw-hero-banner { aspect-ratio: 1 / 1; max-height: 58vh; }
+  /* Telefonda bu oran 160 piksellik bir şeride dönüşürdü. Kutu 4/3'e
+     çekiliyor: kırpma yatayda oluyor, yani iki yana açılan tüllerin uçları
+     kesiliyor ama yüz ve eller tam ortada, tam boy kalıyor. */
+  .nw-hero-banner { aspect-ratio: 4 / 3; max-height: none; }
+  .nw-hero-banner img { object-position: center; }
 }
 
 /* --- BUTONLAR ---------------------------------------------------------- */
