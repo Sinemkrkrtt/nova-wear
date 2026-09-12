@@ -244,10 +244,10 @@ body {
 .nw-hero-banner {
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 9;
-  /* Geniş ekranda 16/9 tüm ekranı kaplayabiliyor; altında ürün olduğu
-     belli olsun diye yükseklik ekranın dörtte üçüyle sınırlı. */
-  max-height: 76vh;
+  aspect-ratio: 21 / 9;
+  /* Yükseklik ekranın yarısını biraz geçiyor: altındaki ürünler ilk bakışta
+     görünsün diye görsel sayfayı kaplamıyor. */
+  max-height: 54vh;
   overflow: hidden;
   background: var(--nw-surface-2);
   border-bottom: 1px solid var(--nw-line);
@@ -256,12 +256,15 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  /* Dikeyde ortadan değil, biraz aşağıdan kırpılıyor: bant kısaldıkça
+     kaybedilen kısım tülün üst tarafı oluyor, gözler ve dudaklar kadrajda
+     kalıyor. */
+  object-position: center 62%;
   display: block;
 }
 
 @media (max-width: 900px) {
-  .nw-hero-banner { aspect-ratio: 4 / 5; }
+  .nw-hero-banner { aspect-ratio: 1 / 1; max-height: 58vh; }
 }
 
 /* --- BUTONLAR ---------------------------------------------------------- */
